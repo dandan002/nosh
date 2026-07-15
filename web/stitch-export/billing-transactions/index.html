@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>rev - Billing &amp; Transactions</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<style type="text/css">
+        .material-symbols-outlined { font-variation-settings: 'FILL' 1; }
+        /* Custom scrollbar for data tables and lists */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #c2c8c2; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #727973; }
+        
+        /* Modern Industrial inner shadow effect for pressed states */
+        .industrial-pressed:active { box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1); transform: translateY(1px); }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                            "on-surface-variant": "#424844",
+                            "outline": "#727973",
+                            "surface-container-low": "#f5f3ee",
+                            "secondary-fixed": "#ffdcbd",
+                            "surface-bright": "#fbf9f4",
+                            "surface-tint": "#496455",
+                            "on-tertiary-container": "#a1afbf",
+                            "secondary-fixed-dim": "#eebd8e",
+                            "error-container": "#ffdad6",
+                            "on-tertiary-fixed-variant": "#3a4855",
+                            "on-secondary": "#ffffff",
+                            "surface-variant": "#e4e2dd",
+                            "surface-container-lowest": "#ffffff",
+                            "on-primary-fixed": "#062014",
+                            "surface-container": "#f0eee9",
+                            "on-background": "#1b1c19",
+                            "primary": "#173124",
+                            "primary-fixed-dim": "#b0cdbb",
+                            "inverse-primary": "#b0cdbb",
+                            "on-tertiary-fixed": "#0f1d28",
+                            "outline-variant": "#c2c8c2",
+                            "on-secondary-container": "#79542d",
+                            "surface-container-high": "#eae8e3",
+                            "error": "#ba1a1a",
+                            "secondary-container": "#fdcb9b",
+                            "secondary": "#7c5730",
+                            "on-tertiary": "#ffffff",
+                            "primary-container": "#2d4739",
+                            "tertiary-container": "#354350",
+                            "on-secondary-fixed-variant": "#61401b",
+                            "background": "#fbf9f4",
+                            "on-primary-fixed-variant": "#324c3e",
+                            "surface": "#fbf9f4",
+                            "surface-container-highest": "#e4e2dd",
+                            "on-surface": "#1b1c19",
+                            "tertiary": "#1f2d39",
+                            "surface-dim": "#dbdad5",
+                            "on-secondary-fixed": "#2c1600",
+                            "on-primary": "#ffffff",
+                            "inverse-on-surface": "#f2f1ec",
+                            "primary-fixed": "#ccead6",
+                            "tertiary-fixed-dim": "#b9c8d8",
+                            "on-primary-container": "#98b5a3",
+                            "inverse-surface": "#30312e",
+                            "on-error-container": "#93000a",
+                            "on-error": "#ffffff",
+                            "tertiary-fixed": "#d5e4f4"
+                    },
+                    "borderRadius": {
+                            "DEFAULT": "0.25rem",
+                            "lg": "0.5rem",
+                            "xl": "0.75rem",
+                            "full": "9999px"
+                    },
+                    "spacing": {
+                            "margin-desktop": "40px",
+                            "max-width": "1440px",
+                            "gutter": "24px",
+                            "margin-mobile": "16px",
+                            "unit": "8px",
+                            "xs": "4px",
+                            "sm": "8px",
+                            "md": "16px",
+                            "lg": "24px",
+                            "xl": "32px"
+                    },
+                    "fontFamily": {
+                            "headline-lg": [
+                                    "Geist"
+                            ],
+                            "body-lg": [
+                                    "Geist"
+                            ],
+                            "label-caps": [
+                                    "Geist"
+                            ],
+                            "headline-lg-mobile": [
+                                    "Geist"
+                            ],
+                            "headline-md": [
+                                    "Geist"
+                            ],
+                            "body-md": [
+                                    "Geist"
+                            ],
+                            "label-lg": ["Geist"], 
+                            "body-sm": ["Geist"],
+                            "headline-sm": ["Geist"], 
+                            "label-md": ["Geist"], 
+                            "display-lg": ["Geist"], 
+                            "mono-sm": ["Geist"]
+                    },
+                    "fontSize": {
+                            "headline-lg": [
+                                    "48px",
+                                    {
+                                            "lineHeight": "1.1",
+                                            "letterSpacing": "-0.02em",
+                                            "fontWeight": "600"
+                                    }
+                            ],
+                            "body-lg": [
+                                    "18px",
+                                    {
+                                            "lineHeight": "1.6",
+                                            "letterSpacing": "0.01em",
+                                            "fontWeight": "400"
+                                    }
+                            ],
+                            "label-caps": [
+                                    "12px",
+                                    {
+                                            "lineHeight": "1",
+                                            "letterSpacing": "0.1em",
+                                            "fontWeight": "600"
+                                    }
+                            ],
+                            "headline-lg-mobile": [
+                                    "32px",
+                                    {
+                                            "lineHeight": "1.2",
+                                            "letterSpacing": "-0.01em",
+                                            "fontWeight": "600"
+                                    }
+                            ],
+                            "headline-md": [
+                                    "24px",
+                                    {
+                                            "lineHeight": "1.3",
+                                            "letterSpacing": "0.01em",
+                                            "fontWeight": "500"
+                                    }
+                            ],
+                            "body-md": [
+                                    "16px",
+                                    {
+                                            "lineHeight": "1.5",
+                                            "letterSpacing": "0.02em",
+                                            "fontWeight": "400"
+                                    }
+                            ],
+                            "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                            "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                            "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                            "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                            "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                            "mono-sm": ["14px", { "lineHeight": "20px", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background min-h-screen font-body-md overflow-hidden selection:bg-primary-container selection:text-on-primary-container">
+<!-- App Shell Container -->
+<div class="flex h-screen w-full">
+<!-- SideNavBar Component -->
+<nav class="fixed left-0 top-0 h-full z-40 bg-surface-dim border-r border-outline-variant h-screen w-20 hover:w-64 transition-all duration-300 overflow-hidden flex flex-col group">
+<!-- Header/Brand -->
+<div class="px-4 py-6 border-b border-outline-variant flex items-center justify-start h-[88px] shrink-0 whitespace-nowrap">
+<span class="font-display-lg text-display-lg font-bold text-primary mr-3 shrink-0">r</span>
+<div class="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col">
+<span class="font-display-lg text-display-lg font-bold text-primary leading-none">ev</span>
+<span class="text-xs text-on-surface-variant mt-1 truncate">Dinner Service - Active</span>
+</div>
+</div>
+<!-- Primary Nav Tabs -->
+<div class="flex-1 overflow-y-auto py-4 space-y-1">
+<!-- Inactive Tabs -->
+<a class="text-on-surface-variant flex items-center px-4 py-3 hover:bg-surface-container-high hover:text-on-surface transition-all duration-200 ease-in-out whitespace-nowrap" href="#">
+<span class="material-symbols-outlined shrink-0 mr-4 text-xl w-6 text-center">dashboard</span>
+<span class="font-label-lg text-label-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200">Dashboard</span>
+</a>
+<a class="text-on-surface-variant flex items-center px-4 py-3 hover:bg-surface-container-high hover:text-on-surface transition-all duration-200 ease-in-out whitespace-nowrap" href="#">
+<span class="material-symbols-outlined shrink-0 mr-4 text-xl w-6 text-center">event_seat</span>
+<span class="font-label-lg text-label-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200">Seating</span>
+</a>
+<a class="text-on-surface-variant flex items-center px-4 py-3 hover:bg-surface-container-high hover:text-on-surface transition-all duration-200 ease-in-out whitespace-nowrap" href="#">
+<span class="material-symbols-outlined shrink-0 mr-4 text-xl w-6 text-center">receipt_long</span>
+<span class="font-label-lg text-label-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200">Orders</span>
+</a>
+<!-- Active Tab (Billing) -->
+<a class="flex items-center px-4 py-3 transition-all duration-200 ease-in-out whitespace-nowrap text-on-secondary-container font-bold border-l-4 border-primary bg-secondary-container" href="#">
+<span class="material-symbols-outlined shrink-0 mr-4 text-xl w-6 text-center -ml-1">payments</span>
+<span class="font-label-lg text-label-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200">Billing</span>
+</a>
+<a class="text-on-surface-variant flex items-center px-4 py-3 hover:bg-surface-container-high hover:text-on-surface transition-all duration-200 ease-in-out whitespace-nowrap" href="#">
+<span class="material-symbols-outlined shrink-0 mr-4 text-xl w-6 text-center">restaurant_menu</span>
+<span class="font-label-lg text-label-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200">Menu</span>
+</a>
+<a class="text-on-surface-variant flex items-center px-4 py-3 hover:bg-surface-container-high hover:text-on-surface transition-all duration-200 ease-in-out whitespace-nowrap" href="#">
+<span class="material-symbols-outlined shrink-0 mr-4 text-xl w-6 text-center">analytics</span>
+<span class="font-label-lg text-label-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200">Analytics</span>
+</a>
+</div>
+<!-- Footer / System Actions -->
+<div class="p-4 border-t border-outline-variant shrink-0 space-y-1 bg-surface-container-low">
+<button class="w-full bg-primary-container text-on-primary-container font-label-lg text-label-lg py-3 rounded-DEFAULT mb-4 industrial-pressed flex items-center justify-center overflow-hidden h-12">
+<span class="material-symbols-outlined shrink-0">add</span>
+<span class="opacity-0 group-hover:opacity-100 w-0 group-hover:w-auto transition-all duration-200 ml-2 whitespace-nowrap">New Order</span>
+</button>
+<a class="text-on-surface-variant flex items-center px-2 py-2 hover:bg-surface-container-high hover:text-on-surface rounded transition-colors whitespace-nowrap" href="#">
+<span class="material-symbols-outlined shrink-0 mr-4 text-[20px] w-6 text-center">settings</span>
+<span class="font-label-lg text-label-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200">Settings</span>
+</a>
+<a class="text-error flex items-center px-2 py-2 hover:bg-error-container hover:text-on-error-container rounded transition-colors whitespace-nowrap" href="#">
+<span class="material-symbols-outlined shrink-0 mr-4 text-[20px] w-6 text-center">logout</span>
+<span class="font-label-lg text-label-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200">Logout</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col pl-20 h-screen overflow-hidden">
+<!-- TopNavBar Component -->
+<header class="bg-background flex justify-between items-center w-full px-margin-desktop py-sm h-[88px] shrink-0 border-b border-outline-variant z-30">
+<div class="flex items-center space-x-lg">
+<h1 class="font-headline-lg text-headline-lg font-black text-primary">rev</h1>
+<div class="h-8 w-px bg-outline-variant mx-2"></div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Billing &amp; Transactions</h2>
+</div>
+<div class="flex items-center space-x-md">
+<!-- Search Bar (Right aligned per JSON) -->
+<div class="relative w-64 hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+<input class="w-full bg-surface-container-highest border border-outline focus:border-primary-container text-on-surface rounded-DEFAULT py-2 pl-10 pr-4 text-sm font-body-sm transition-colors focus:outline-none focus:ring-0 placeholder:text-on-surface-variant" placeholder="Search tables, items, IDs..." type="text"/>
+</div>
+<!-- Trailing Actions -->
+<div class="flex items-center space-x-2">
+<button class="text-on-surface-variant hover:text-primary transition-colors scale-95 active:opacity-80 p-2 rounded hover:bg-surface-container-high">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors scale-95 active:opacity-80 p-2 rounded hover:bg-surface-container-high">
+<span class="material-symbols-outlined">help</span>
+</button>
+</div>
+<!-- Status & Profile -->
+<div class="flex items-center ml-4 pl-4 border-l border-outline-variant">
+<div class="hidden md:flex flex-col items-end mr-3">
+<span class="font-label-md text-label-md text-primary-container uppercase tracking-wider">Dinner Service - Active</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Manager</span>
+</div>
+<div class="h-10 w-10 rounded-full bg-surface-container-highest border border-outline-variant overflow-hidden shrink-0">
+<img alt="Manager Avatar" class="w-full h-full object-cover" data-alt="A detailed headshot photo of a professional restaurant manager in a dimly lit, high-end modern industrial dining room, wearing a sharp dark uniform. Crisp lighting highlights efficiency and control." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6sn5okihKN0kpVwfr1gbY8PYw7ZHNC_B4esMFvhHzH5COha1k9lqNEyg8n-5LF13tRRJK5Gi_92VAjC-F-gdVOY-0QUbBG9AfDCh4rfZJ9DrveNq1yQ-3YUZdM8452A6JiL85j-wMlxGWgOGyS5WmfwImeWdvX4jO2Jxc6zLEOeUxTzxzWaZUYPdAqOeRs4STK-xqB1K_SVQvfV0Cew8nzBcR0G401vnSl7WtTY_eJEEAFYiJTRxnBsdfl8yTGfFPVyk-ur1Pijt4"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Dashboard Content Layout -->
+<div class="flex-1 overflow-hidden flex flex-col lg:flex-row bg-surface-container p-margin-mobile lg:p-margin-desktop gap-lg">
+<!-- Left Pane: Active Bills List -->
+<div class="w-full lg:w-1/3 flex flex-col gap-sm">
+<div class="flex items-center justify-between mb-2 shrink-0">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Active Tables</h3>
+<span class="font-label-md text-label-md bg-surface-variant text-on-surface-variant px-2 py-1 rounded">12 OPEN</span>
+</div>
+<div class="flex-1 overflow-y-auto pr-2 space-y-xs pb-4">
+<!-- Table Card 1 (Active) -->
+<div class="bg-surface-container-lowest border-2 border-primary-container rounded-DEFAULT p-3 cursor-pointer relative overflow-hidden group shadow-sm">
+<div class="absolute top-0 left-0 w-1 h-full bg-primary-container"></div>
+<div class="flex justify-between items-start mb-2">
+<div class="flex items-center gap-2">
+<span class="font-headline-md text-headline-md text-on-surface">T-14</span>
+<span class="font-label-md text-label-md bg-primary-container text-on-primary-container px-1.5 py-0.5 rounded uppercase">Fired</span>
+</div>
+<span class="font-mono-sm text-mono-sm text-error">1:45h</span>
+</div>
+<div class="flex justify-between items-end">
+<div class="font-body-sm text-body-sm text-on-surface-variant">
+                                    4 Covers • Server: Alex
+                                </div>
+<div class="font-headline-sm text-headline-sm text-on-surface">$245.50</div>
+</div>
+</div>
+<!-- Table Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-DEFAULT p-3 cursor-pointer hover:border-outline transition-colors shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<div class="flex items-center gap-2">
+<span class="font-headline-md text-headline-md text-on-surface">T-08</span>
+<span class="font-label-md text-label-md bg-primary-fixed text-on-primary-fixed px-1.5 py-0.5 rounded uppercase">Ready</span>
+</div>
+<span class="font-mono-sm text-mono-sm text-on-surface-variant">42m</span>
+</div>
+<div class="flex justify-between items-end">
+<div class="font-body-sm text-body-sm text-on-surface-variant">
+                                    2 Covers • Server: Maria
+                                </div>
+<div class="font-headline-sm text-headline-sm text-on-surface">$128.00</div>
+</div>
+</div>
+<!-- Table Card 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-DEFAULT p-3 cursor-pointer hover:border-outline transition-colors shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<div class="flex items-center gap-2">
+<span class="font-headline-md text-headline-md text-on-surface">Bar-02</span>
+<span class="font-label-md text-label-md bg-surface-variant text-on-surface-variant px-1.5 py-0.5 rounded uppercase">Drinks</span>
+</div>
+<span class="font-mono-sm text-mono-sm text-on-surface-variant">15m</span>
+</div>
+<div class="flex justify-between items-end">
+<div class="font-body-sm text-body-sm text-on-surface-variant">
+                                    1 Cover • Server: Sam
+                                </div>
+<div class="font-headline-sm text-headline-sm text-on-surface">$42.00</div>
+</div>
+</div>
+<!-- Table Card 4 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-DEFAULT p-3 cursor-pointer hover:border-outline transition-colors shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<div class="flex items-center gap-2">
+<span class="font-headline-md text-headline-md text-on-surface">T-22</span>
+<span class="font-label-md text-label-md bg-primary-container text-on-primary-container px-1.5 py-0.5 rounded uppercase">Fired</span>
+</div>
+<span class="font-mono-sm text-mono-sm text-on-surface-variant">58m</span>
+</div>
+<div class="flex justify-between items-end">
+<div class="font-body-sm text-body-sm text-on-surface-variant">
+                                    6 Covers • Server: Alex
+                                </div>
+<div class="font-headline-sm text-headline-sm text-on-surface">$410.25</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Pane: Bill Detail & Actions -->
+<div class="w-full lg:w-2/3 flex flex-col gap-md h-full overflow-hidden">
+<!-- Detail Card Container -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-DEFAULT flex-1 flex flex-col overflow-hidden shadow-sm">
+<!-- Detail Header -->
+<div class="p-md border-b border-outline-variant flex justify-between items-center bg-surface-container-low shrink-0">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface flex items-center gap-3">
+                                    Table 14
+                                    <span class="font-label-md text-label-md bg-surface-container-high text-on-surface px-2 py-1 rounded">ID: #ORD-8821</span>
+</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Opened at 18:30 • 4 Covers • Server: Alex J.</p>
+</div>
+<div class="flex gap-sm">
+<button class="p-2 border border-outline text-on-surface-variant rounded hover:bg-surface-container transition-colors industrial-pressed">
+<span class="material-symbols-outlined">sprint</span>
+</button>
+<button class="p-2 border border-outline text-on-surface-variant rounded hover:bg-surface-container transition-colors industrial-pressed">
+<span class="material-symbols-outlined">edit_note</span>
+</button>
+</div>
+</div>
+<!-- Main Split Content Area -->
+<div class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+<!-- Itemized List (Left sub-pane) -->
+<div class="flex-1 border-r border-outline-variant flex flex-col overflow-hidden">
+<div class="px-md py-sm border-b border-outline-variant bg-surface-container-low grid grid-cols-12 gap-2 shrink-0">
+<div class="col-span-1 font-label-md text-label-md text-on-surface-variant">QTY</div>
+<div class="col-span-7 font-label-md text-label-md text-on-surface-variant">ITEM</div>
+<div class="col-span-2 font-label-md text-label-md text-on-surface-variant text-right">EACH</div>
+<div class="col-span-2 font-label-md text-label-md text-on-surface-variant text-right">TOTAL</div>
+</div>
+<div class="flex-1 overflow-y-auto bg-surface-container-lowest">
+<div class="px-md py-sm border-b border-outline-variant grid grid-cols-12 gap-2 items-center hover:bg-surface-container-low transition-colors group">
+<div class="col-span-1 font-mono-sm text-mono-sm text-on-surface">2</div>
+<div class="col-span-7 font-body-sm text-body-sm text-on-surface">
+                                            Signature Cocktails
+                                            <span class="block text-xs text-on-surface-variant">1x Old Fashioned, 1x Martini</span>
+</div>
+<div class="col-span-2 font-mono-sm text-mono-sm text-on-surface-variant text-right">18.00</div>
+<div class="col-span-2 font-mono-sm text-mono-sm text-on-surface text-right">36.00</div>
+</div>
+<div class="px-md py-sm border-b border-outline-variant grid grid-cols-12 gap-2 items-center hover:bg-surface-container-low transition-colors group">
+<div class="col-span-1 font-mono-sm text-mono-sm text-on-surface">1</div>
+<div class="col-span-7 font-body-sm text-body-sm text-on-surface">
+                                            Crispy Calamari
+                                        </div>
+<div class="col-span-2 font-mono-sm text-mono-sm text-on-surface-variant text-right">22.50</div>
+<div class="col-span-2 font-mono-sm text-mono-sm text-on-surface text-right">22.50</div>
+</div>
+<div class="px-md py-sm border-b border-outline-variant grid grid-cols-12 gap-2 items-center hover:bg-surface-container-low transition-colors group">
+<div class="col-span-1 font-mono-sm text-mono-sm text-on-surface">2</div>
+<div class="col-span-7 font-body-sm text-body-sm text-on-surface">
+                                            Bone-in Ribeye
+                                            <span class="block text-xs text-on-surface-variant">Med-Rare, Peppercorn Sauce</span>
+</div>
+<div class="col-span-2 font-mono-sm text-mono-sm text-on-surface-variant text-right">65.00</div>
+<div class="col-span-2 font-mono-sm text-mono-sm text-on-surface text-right">130.00</div>
+</div>
+<div class="px-md py-sm border-b border-outline-variant grid grid-cols-12 gap-2 items-center hover:bg-surface-container-low transition-colors group">
+<div class="col-span-1 font-mono-sm text-mono-sm text-on-surface">1</div>
+<div class="col-span-7 font-body-sm text-body-sm text-on-surface">
+                                            Wild Mushroom Risotto
+                                        </div>
+<div class="col-span-2 font-mono-sm text-mono-sm text-on-surface-variant text-right">38.00</div>
+<div class="col-span-2 font-mono-sm text-mono-sm text-on-surface text-right">38.00</div>
+</div>
+<div class="px-md py-sm border-b border-outline-variant grid grid-cols-12 gap-2 items-center hover:bg-surface-container-low transition-colors group">
+<div class="col-span-1 font-mono-sm text-mono-sm text-on-surface">1</div>
+<div class="col-span-7 font-body-sm text-body-sm text-on-surface">
+                                            Bottle: Pinot Noir, Oregon
+                                        </div>
+<div class="col-span-2 font-mono-sm text-mono-sm text-on-surface-variant text-right">85.00</div>
+<div class="col-span-2 font-mono-sm text-mono-sm text-on-surface text-right">85.00</div>
+</div>
+</div>
+</div>
+<!-- Totals & Payment (Right sub-pane) -->
+<div class="w-full lg:w-80 bg-surface flex flex-col shrink-0">
+<!-- Totals Block -->
+<div class="p-md border-b border-outline-variant space-y-2">
+<div class="flex justify-between font-body-sm text-on-surface-variant">
+<span>Subtotal</span>
+<span class="font-mono-sm text-on-surface">311.50</span>
+</div>
+<div class="flex justify-between font-body-sm text-on-surface-variant">
+<span>Tax (8.5%)</span>
+<span class="font-mono-sm text-on-surface">26.48</span>
+</div>
+<!-- Gratuity Selection -->
+<div class="pt-2 pb-1">
+<div class="flex justify-between font-body-sm text-on-surface-variant mb-2">
+<span>Gratuity</span>
+<span class="font-mono-sm text-primary-container">62.30</span>
+</div>
+<div class="grid grid-cols-3 gap-1">
+<button class="bg-surface-container hover:bg-surface-variant text-on-surface font-label-md py-1 rounded border border-transparent transition-colors">18%</button>
+<button class="bg-surface-container-lowest border border-primary-container text-primary-container font-label-md py-1 rounded transition-colors">20%</button>
+<button class="bg-surface-container hover:bg-surface-variant text-on-surface font-label-md py-1 rounded border border-transparent transition-colors">25%</button>
+</div>
+</div>
+<div class="pt-4 border-t border-outline-variant flex justify-between items-end mt-2">
+<span class="font-headline-sm text-on-surface">Total</span>
+<span class="font-headline-lg font-bold text-on-surface">400.28</span>
+</div>
+</div>
+<!-- Payment Actions -->
+<div class="p-md space-y-md flex-1 flex flex-col justify-end bg-surface-container-low">
+<div class="grid grid-cols-2 gap-2 mb-2">
+<button class="bg-transparent border border-outline text-on-surface font-label-lg py-3 rounded-DEFAULT industrial-pressed hover:bg-surface-container-highest transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[20px]">payments</span>
+                                            Cash
+                                        </button>
+<button class="bg-transparent border border-outline text-on-surface font-label-lg py-3 rounded-DEFAULT industrial-pressed hover:bg-surface-container-highest transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[20px]">credit_card</span>
+                                            Card
+                                        </button>
+</div>
+<button class="w-full bg-primary-container text-on-primary-container font-label-lg text-lg py-4 rounded-DEFAULT industrial-pressed font-bold flex items-center justify-center gap-2 uppercase tracking-wide">
+                                        Close Table
+                                        <span class="material-symbols-outlined">check_circle</span>
+</button>
+<button class="w-full bg-transparent text-on-surface-variant hover:text-on-surface font-label-lg py-2 rounded-DEFAULT transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">receipt</span>
+                                        Print Receipt
+                                    </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Pane: Transaction History Data Table -->
+<div class="h-48 bg-surface-container-lowest border border-outline-variant rounded-DEFAULT flex flex-col shrink-0 shadow-sm overflow-hidden">
+<div class="px-md py-sm border-b border-outline-variant bg-surface-container-low flex justify-between items-center shrink-0">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Recent Transactions</h3>
+<button class="text-primary-container font-label-md hover:underline">View All</button>
+</div>
+<div class="flex-1 overflow-y-auto">
+<table class="w-full text-left border-collapse">
+<thead class="sticky top-0 bg-surface-container-lowest border-b border-outline-variant z-10 shadow-sm">
+<tr>
+<th class="px-4 py-2 font-label-md text-on-surface-variant">TIME</th>
+<th class="px-4 py-2 font-label-md text-on-surface-variant">TABLE/ID</th>
+<th class="px-4 py-2 font-label-md text-on-surface-variant">METHOD</th>
+<th class="px-4 py-2 font-label-md text-on-surface-variant text-right">AMOUNT</th>
+<th class="px-4 py-2 font-label-md text-on-surface-variant text-center">STATUS</th>
+</tr>
+</thead>
+<tbody class="font-mono-sm text-body-sm text-on-surface">
+<tr class="h-10 hover:bg-surface-container transition-colors border-b border-outline-variant">
+<td class="px-4 py-1 text-on-surface-variant">19:42</td>
+<td class="px-4 py-1">T-04 #8819</td>
+<td class="px-4 py-1 flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">credit_card</span> Visa *4421</td>
+<td class="px-4 py-1 text-right">184.50</td>
+<td class="px-4 py-1 text-center"><span class="bg-primary-fixed text-on-primary-fixed px-2 py-0.5 rounded text-xs">Approved</span></td>
+</tr>
+<tr class="h-10 bg-surface-container-low hover:bg-surface-container transition-colors border-b border-outline-variant">
+<td class="px-4 py-1 text-on-surface-variant">19:35</td>
+<td class="px-4 py-1">Bar-12 #8818</td>
+<td class="px-4 py-1 flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">payments</span> Cash</td>
+<td class="px-4 py-1 text-right">32.00</td>
+<td class="px-4 py-1 text-center"><span class="bg-outline-variant text-on-surface px-2 py-0.5 rounded text-xs">Closed</span></td>
+</tr>
+<tr class="h-10 hover:bg-surface-container transition-colors border-b border-outline-variant">
+<td class="px-4 py-1 text-on-surface-variant">19:15</td>
+<td class="px-4 py-1">T-21 #8817</td>
+<td class="px-4 py-1 flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">credit_card</span> Amex *1005</td>
+<td class="px-4 py-1 text-right">412.80</td>
+<td class="px-4 py-1 text-center"><span class="bg-primary-fixed text-on-primary-fixed px-2 py-0.5 rounded text-xs">Approved</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

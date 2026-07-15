@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>rev - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "on-surface-variant": "#424844",
+                "outline": "#727973",
+                "surface-container-low": "#f5f3ee",
+                "secondary-fixed": "#ffdcbd",
+                "surface-bright": "#fbf9f4",
+                "surface-tint": "#496455",
+                "on-tertiary-container": "#a1afbf",
+                "secondary-fixed-dim": "#eebd8e",
+                "error-container": "#ffdad6",
+                "on-tertiary-fixed-variant": "#3a4855",
+                "on-secondary": "#ffffff",
+                "surface-variant": "#e4e2dd",
+                "surface-container-lowest": "#ffffff",
+                "on-primary-fixed": "#062014",
+                "surface-container": "#f0eee9",
+                "on-background": "#1b1c19",
+                "primary": "#173124",
+                "primary-fixed-dim": "#b0cdbb",
+                "inverse-primary": "#b0cdbb",
+                "on-tertiary-fixed": "#0f1d28",
+                "outline-variant": "#c2c8c2",
+                "on-secondary-container": "#79542d",
+                "surface-container-high": "#eae8e3",
+                "error": "#ba1a1a",
+                "secondary-container": "#fdcb9b",
+                "secondary": "#7c5730",
+                "on-tertiary": "#ffffff",
+                "primary-container": "#2d4739",
+                "tertiary-container": "#354350",
+                "on-secondary-fixed-variant": "#61401b",
+                "background": "#fbf9f4",
+                "on-primary-fixed-variant": "#324c3e",
+                "surface": "#fbf9f4",
+                "surface-container-highest": "#e4e2dd",
+                "on-surface": "#1b1c19",
+                "tertiary": "#1f2d39",
+                "surface-dim": "#dbdad5",
+                "on-secondary-fixed": "#2c1600",
+                "on-primary": "#ffffff",
+                "inverse-on-surface": "#f2f1ec",
+                "primary-fixed": "#ccead6",
+                "tertiary-fixed-dim": "#b9c8d8",
+                "on-primary-container": "#98b5a3",
+                "inverse-surface": "#30312e",
+                "on-error-container": "#93000a",
+                "on-error": "#ffffff",
+                "tertiary-fixed": "#d5e4f4"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "margin-desktop": "40px",
+                "max-width": "1440px",
+                "gutter": "24px",
+                "margin-mobile": "16px",
+                "unit": "8px"
+        },
+        "fontFamily": {
+                "headline-lg": [
+                        "Geist"
+                ],
+                "body-lg": [
+                        "Geist"
+                ],
+                "label-caps": [
+                        "Geist"
+                ],
+                "headline-lg-mobile": [
+                        "Geist"
+                ],
+                "headline-md": [
+                        "Geist"
+                ],
+                "body-md": [
+                        "Geist"
+                ]
+        },
+        "fontSize": {
+                "headline-lg": [
+                        "48px",
+                        {
+                                "lineHeight": "1.1",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "body-lg": [
+                        "18px",
+                        {
+                                "lineHeight": "1.6",
+                                "letterSpacing": "0.01em",
+                                "fontWeight": "400"
+                        }
+                ],
+                "label-caps": [
+                        "12px",
+                        {
+                                "lineHeight": "1",
+                                "letterSpacing": "0.1em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "headline-lg-mobile": [
+                        "32px",
+                        {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "-0.01em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "headline-md": [
+                        "24px",
+                        {
+                                "lineHeight": "1.3",
+                                "letterSpacing": "0.01em",
+                                "fontWeight": "500"
+                        }
+                ],
+                "body-md": [
+                        "16px",
+                        {
+                                "lineHeight": "1.5",
+                                "letterSpacing": "0.02em",
+                                "fontWeight": "400"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+<style>
+        .inner-glow {
+            box-shadow: inset 0 0 0 1px #e4e2dd;
+        }
+        .pressed-state:active {
+            box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.1), inset 0 0 0 1px #e4e2dd;
+        }
+        
+        .zebra-stripes > div:nth-child(even), .zebra-stripes > tr:nth-child(even) { background-color: #f5f3ee; }
+        
+        /* Utility for Material Symbols */
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill-1 {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md h-screen w-full overflow-hidden flex">
+<!-- SideNavBar (Desktop/Tablet) -->
+<nav class="hidden md:flex flex-col justify-between fixed left-0 top-0 h-full z-40 bg-surface-container-low border-r border-outline-variant h-screen w-20 hover:w-64 transition-all duration-300 overflow-hidden group">
+<div class="flex flex-col w-64">
+<!-- Brand Area -->
+<div class="h-20 flex items-center px-4 border-b border-outline-variant w-full">
+<span class="font-headline-lg text-headline-lg font-bold text-primary mr-3">r</span>
+<span class="font-headline-lg text-headline-lg font-bold text-primary opacity-0 group-hover:opacity-100 transition-opacity duration-200">ev</span>
+</div>
+<!-- Profile Info (Hover state) -->
+<div class="px-4 py-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200 border-b border-outline-variant flex items-center w-full">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center inner-glow flex-shrink-0 overflow-hidden">
+<img alt="Staff Profile Picture" class="w-full h-full object-cover" data-alt="A close up, professional headshot of a stern restaurant manager in a dark grey suit jacket and black shirt, lit by dramatic, high contrast studio lighting against a dark slate background, embodying authority and control." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4A4_x1UwRYh83HXXwO5qqIaSDYCPvtO0E3Bpr5-LuYh-lHAvqEJM89kU8G20KrsVsAU_Qv3Bifv0192rHnFNMNYn4XAAXqmPtTxtiIGTDbIcN45Y74-fC6XkPbDExG-74z2u6IKVPAiDYJyGxq6Fhp5WmvxvYUiYXcdwAQt4St_1l7dz9jmuNK_bXEn2ASboJuuodsWmzuHCk9EaZKPAZWolSmjG3I7Z6E3F_AhI0Kxprb3MrKp49HdMZ8UnPSFKZ8qHP-RSjZ_-0"/>
+</div>
+<div class="ml-2 overflow-hidden flex-1">
+<div class="font-body-md text-body-md text-on-surface font-semibold truncate">Alex Mercer</div>
+<div class="font-label-caps text-label-caps text-primary truncate">Dinner Service - Active</div>
+</div>
+</div>
+<!-- Navigation Links -->
+<div class="flex flex-col mt-4 w-full">
+<!-- Active Tab -->
+<a class="flex items-center px-4 py-3 text-primary font-bold border-l-4 border-primary bg-secondary-container transition-all duration-200 ease-in-out w-full" href="#">
+<span class="material-symbols-outlined icon-fill-1 mr-4">dashboard</span>
+<span class="font-body-md text-body-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200">Dashboard</span>
+</a>
+<!-- Inactive Tabs -->
+<a class="flex items-center px-4 py-3 text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-200 ease-in-out border-l-4 border-transparent w-full" href="#">
+<span class="material-symbols-outlined mr-4">event_seat</span>
+<span class="font-body-md text-body-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200">Seating</span>
+</a>
+<a class="flex items-center px-4 py-3 text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-200 ease-in-out border-l-4 border-transparent w-full" href="#">
+<span class="material-symbols-outlined mr-4">receipt_long</span>
+<span class="font-body-md text-body-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200">Orders</span>
+</a>
+<a class="flex items-center px-4 py-3 text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-200 ease-in-out border-l-4 border-transparent w-full" href="#">
+<span class="material-symbols-outlined mr-4">payments</span>
+<span class="font-body-md text-body-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200">Billing</span>
+</a>
+<a class="flex items-center px-4 py-3 text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-200 ease-in-out border-l-4 border-transparent w-full" href="#">
+<span class="material-symbols-outlined mr-4">restaurant_menu</span>
+<span class="font-body-md text-body-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200">Menu</span>
+</a>
+<a class="flex items-center px-4 py-3 text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-200 ease-in-out border-l-4 border-transparent w-full" href="#">
+<span class="material-symbols-outlined mr-4">analytics</span>
+<span class="font-body-md text-body-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200">Analytics</span>
+</a>
+</div>
+<div class="px-4 mt-6 opacity-0 group-hover:opacity-100 transition-opacity duration-200 w-full">
+<button class="w-full bg-primary-container text-on-primary font-body-md text-body-md py-2 px-4 rounded flex items-center justify-center pressed-state transition-all duration-150">
+<span class="material-symbols-outlined mr-2 text-on-primary">add</span>
+                    New Order
+                </button>
+</div>
+</div>
+<div class="flex flex-col pb-4 w-64 border-t border-outline-variant pt-4 mt-auto">
+<a class="flex items-center px-4 py-3 text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-200 ease-in-out border-l-4 border-transparent w-full" href="#">
+<span class="material-symbols-outlined mr-4">settings</span>
+<span class="font-body-md text-body-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200">Settings</span>
+</a>
+<a class="flex items-center px-4 py-3 text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-200 ease-in-out border-l-4 border-transparent w-full" href="#">
+<span class="material-symbols-outlined mr-4">logout</span>
+<span class="font-body-md text-body-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200">Logout</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 ml-0 md:ml-20 h-full overflow-y-auto flex flex-col relative z-0">
+<!-- TopNavBar -->
+<header class="bg-surface border-b border-outline-variant flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-2 sticky top-0 z-30">
+<div class="flex items-center flex-1">
+<!-- Mobile Menu Button -->
+<button class="md:hidden mr-4 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="md:hidden font-headline-md text-headline-md font-black text-primary mr-6">rev</h1>
+<div class="relative w-full max-w-md hidden md:block">
+<span class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-surface-variant">search</span>
+<input class="w-full bg-surface-container-low border border-outline-variant rounded pl-10 pr-2 py-2 text-on-surface font-body-md focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container placeholder:text-outline transition-colors inner-glow" placeholder="Search orders, tables, items..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden lg:flex items-center gap-2 px-2 py-1 bg-surface-container rounded border border-outline-variant">
+<div class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></div>
+<span class="font-label-caps text-label-caps text-primary-container uppercase">Dinner Service - Active</span>
+</div>
+<button class="text-on-surface-variant hover:text-primary transition-colors scale-95 active:opacity-80 relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute -top-1 -right-1 w-2 h-2 bg-primary-container rounded-full"></span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors scale-95 active:opacity-80">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center inner-glow overflow-hidden md:hidden">
+<img alt="Manager Avatar" class="w-full h-full object-cover" data-alt="A close up, professional headshot of a stern restaurant manager in a dark grey suit jacket and black shirt, lit by dramatic, high contrast studio lighting against a dark slate background, embodying authority and control." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdFG1aLlmPSgHqXyQtjcJpzqehp1CG0QaEj3dXGI-v-PnhZkVjiU72dprd_9X6_lj93-LJrZMbSdu-w7khIXQBX8shx84qpuw4ODWfClwd5C1RKCbtBeo57I5HKs3FToILGgxJ86YWUu1oTLAMSFxplWwg3L4A053VXCYMgtTAltvtT6MExDYe5NupAA05RfQpdwcDhJLkWG9_uWOMUPWgNVGcGmQeX7GbgPXyuRWCz8Ya3HTBij3RQx5xrW_eSMrYOirb0Op33-Lh"/>
+</div>
+</div>
+</header>
+<!-- Dashboard Content -->
+<div class="p-margin-mobile md:p-margin-desktop flex-1 flex flex-col gap-gutter max-w-max-width mx-auto w-full">
+<!-- Page Header -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface">Operations Overview</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Live metrics for current service.</p>
+</div>
+<div class="flex gap-2">
+<button class="bg-transparent border border-outline-variant text-on-surface font-body-md text-body-md font-semibold py-2 px-4 rounded flex items-center justify-center pressed-state transition-all duration-150 hover:bg-surface-container">
+<span class="material-symbols-outlined mr-1 text-sm">calendar_today</span>
+                        Today
+                    </button>
+<button class="bg-primary-container text-on-primary font-body-md text-body-md font-semibold py-2 px-4 rounded flex items-center justify-center pressed-state transition-all duration-150">
+<span class="material-symbols-outlined mr-1 text-sm">bolt</span>
+                        Rush Mode
+                    </button>
+</div>
+</div>
+<!-- KPIs Bento Grid -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-gutter">
+<!-- KPI 1: Sales -->
+<div class="bg-surface-container-lowest rounded-lg p-4 inner-glow border-t-2 border-primary-container relative overflow-hidden group">
+<div class="absolute -right-4 -top-4 opacity-5 group-hover:opacity-10 transition-opacity text-primary">
+<span class="material-symbols-outlined text-[100px]">payments</span>
+</div>
+<div class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Total Sales</div>
+<div class="font-headline-lg text-headline-lg text-on-surface mt-2">$12,450</div>
+<div class="flex items-center mt-1">
+<span class="material-symbols-outlined text-[14px] text-primary-container mr-1">trending_up</span>
+<span class="font-body-md text-[14px] font-semibold text-primary-container">+14.2%</span>
+<span class="font-body-md text-on-surface-variant ml-1 text-[12px]">vs yesterday</span>
+</div>
+</div>
+<!-- KPI 2: Active Tables -->
+<div class="bg-surface-container-lowest rounded-lg p-4 inner-glow relative overflow-hidden group">
+<div class="absolute -right-4 -top-4 opacity-5 group-hover:opacity-10 transition-opacity text-primary">
+<span class="material-symbols-outlined text-[100px]">event_seat</span>
+</div>
+<div class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Active Tables</div>
+<div class="flex items-baseline mt-2">
+<span class="font-headline-lg text-headline-lg text-on-surface">32</span>
+<span class="font-headline-md text-headline-md text-on-surface-variant ml-1">/45</span>
+</div>
+<div class="w-full bg-surface-variant h-1.5 rounded-full mt-2 overflow-hidden inner-glow">
+<div class="bg-secondary h-full rounded-full" style="width: 71%"></div>
+</div>
+</div>
+<!-- KPI 3: Turnaround -->
+<div class="bg-surface-container-lowest rounded-lg p-4 inner-glow relative overflow-hidden group">
+<div class="absolute -right-4 -top-4 opacity-5 group-hover:opacity-10 transition-opacity text-primary">
+<span class="material-symbols-outlined text-[100px]">timer</span>
+</div>
+<div class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Avg Turnaround</div>
+<div class="font-headline-lg text-headline-lg text-on-surface mt-2">42m</div>
+<div class="flex items-center mt-1">
+<span class="material-symbols-outlined text-[14px] text-secondary mr-1">trending_up</span>
+<span class="font-body-md text-[14px] font-semibold text-secondary">+5m</span>
+<span class="font-body-md text-on-surface-variant ml-1 text-[12px]">target: 45m</span>
+</div>
+</div>
+<!-- KPI 4: Pending Tickets -->
+<div class="bg-surface-container-lowest rounded-lg p-4 inner-glow border-t-2 border-error relative overflow-hidden group">
+<div class="absolute -right-4 -top-4 opacity-5 group-hover:opacity-10 transition-opacity text-error">
+<span class="material-symbols-outlined text-[100px]">receipt_long</span>
+</div>
+<div class="font-label-caps text-label-caps text-error uppercase tracking-wider">Delayed Tickets</div>
+<div class="font-headline-lg text-headline-lg text-error mt-2">4</div>
+<div class="font-body-md text-on-surface-variant mt-1 text-[12px]">Over 20m prep time</div>
+</div>
+</div>
+<!-- Main Data Area: Charts & Feed -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter h-[400px]">
+<!-- Charts Area (Spans 2 cols) -->
+<div class="lg:col-span-2 bg-surface-container-lowest rounded-lg p-4 inner-glow flex flex-col">
+<div class="flex justify-between items-center mb-4 border-b border-surface-variant pb-2">
+<h3 class="font-headline-md text-[20px] text-on-surface font-semibold">Hourly Revenue &amp; Occupancy</h3>
+<div class="flex gap-2">
+<span class="flex items-center font-label-caps text-label-caps text-on-surface-variant"><div class="w-3 h-3 rounded bg-secondary mr-1"></div> Revenue</span>
+<span class="flex items-center font-label-caps text-label-caps text-on-surface-variant"><div class="w-3 h-3 rounded bg-tertiary-container mr-1"></div> Occupancy %</span>
+</div>
+</div>
+<!-- Faux Chart Area -->
+<div class="flex-1 relative flex items-end justify-between pt-6 pb-4 px-2 border-b border-l border-surface-variant">
+<!-- Y-Axis labels -->
+<div class="absolute left-[-30px] top-0 bottom-4 flex flex-col justify-between text-[10px] text-on-surface-variant font-body-md items-end pr-1">
+<span>$3k</span>
+<span>$2k</span>
+<span>$1k</span>
+<span>$0</span>
+</div>
+<!-- Grid lines -->
+<div class="absolute inset-0 border-b border-surface-variant opacity-50 top-[25%]"></div>
+<div class="absolute inset-0 border-b border-surface-variant opacity-50 top-[50%]"></div>
+<div class="absolute inset-0 border-b border-surface-variant opacity-50 top-[75%]"></div>
+<!-- Chart Bars -->
+<div class="w-[8%] flex flex-col justify-end items-center h-full group relative z-10">
+<div class="w-full bg-secondary rounded-t h-[30%] opacity-80 hover:opacity-100 transition-opacity"></div>
+<div class="absolute -bottom-6 font-body-md text-[10px] text-on-surface-variant">5PM</div>
+</div>
+<div class="w-[8%] flex flex-col justify-end items-center h-full group relative z-10">
+<div class="w-full bg-secondary rounded-t h-[50%] opacity-80 hover:opacity-100 transition-opacity"></div>
+<div class="absolute -bottom-6 font-body-md text-[10px] text-on-surface-variant">6PM</div>
+</div>
+<div class="w-[8%] flex flex-col justify-end items-center h-full group relative z-10">
+<div class="w-full bg-secondary rounded-t h-[85%] opacity-80 hover:opacity-100 transition-opacity relative">
+<div class="absolute -top-6 left-1/2 -translate-x-1/2 bg-surface text-on-surface font-body-md font-semibold text-[10px] px-1 rounded border border-surface-variant opacity-0 group-hover:opacity-100 shadow-sm">$2.4k</div>
+</div>
+<div class="absolute -bottom-6 font-body-md text-[10px] font-bold text-on-surface">7PM</div>
+</div>
+<div class="w-[8%] flex flex-col justify-end items-center h-full group relative z-10">
+<div class="w-full bg-secondary rounded-t h-[70%] opacity-80 hover:opacity-100 transition-opacity"></div>
+<div class="absolute -bottom-6 font-body-md text-[10px] text-on-surface-variant">8PM</div>
+</div>
+<div class="w-[8%] flex flex-col justify-end items-center h-full group relative z-10">
+<div class="w-full bg-tertiary-container border border-surface-variant border-b-0 rounded-t h-[40%] opacity-80 hover:opacity-100 transition-opacity relative overflow-hidden">
+<div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTAgMjBMMjAgMEwyMCAyMEgwWiIgZmlsbD0iIzQ3NTU2OSIgZmlsbC1vcGFjaXR5PSIwLjMiLz48L3N2Zz4=')]"></div>
+</div>
+<div class="absolute -bottom-6 font-body-md text-[10px] text-on-surface-variant">9PM</div>
+</div>
+<div class="w-[8%] flex flex-col justify-end items-center h-full group relative z-10">
+<div class="w-full bg-tertiary-container border border-surface-variant border-b-0 rounded-t h-[20%] opacity-80 hover:opacity-100 transition-opacity relative overflow-hidden">
+<div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTAgMjBMMjAgMEwyMCAyMEgwWiIgZmlsbD0iIzQ3NTU2OSIgZmlsbC1vcGFjaXR5PSIwLjMiLz48L3N2Zz4=')]"></div>
+</div>
+<div class="absolute -bottom-6 font-body-md text-[10px] text-on-surface-variant">10PM</div>
+</div>
+<!-- Line chart overlay (Occupancy) -->
+<svg class="absolute inset-0 h-full w-full pointer-events-none" preserveaspectratio="none" viewbox="0 0 100 100">
+<path d="M 5,80 L 22,60 L 39,20 L 56,30 L 73,70 L 90,90" fill="none" stroke="#727973" stroke-dasharray="4 2" stroke-width="1.5"></path>
+<circle cx="39" cy="20" fill="#727973" r="1.5"></circle>
+</svg>
+</div>
+</div>
+<!-- Live Feed Panel -->
+<div class="bg-surface-container-lowest rounded-lg p-4 inner-glow flex flex-col h-full">
+<div class="flex justify-between items-center mb-4 border-b border-surface-variant pb-2">
+<h3 class="font-headline-md text-[20px] text-on-surface font-semibold flex items-center">
+<span class="w-2 h-2 rounded-full bg-primary mr-2 animate-pulse"></span>
+                            Live Feed
+                        </h3>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-on-surface text-sm">filter_list</span>
+</div>
+<div class="flex-1 overflow-y-auto pr-1 flex flex-col gap-2 custom-scrollbar">
+<!-- Feed Item 1: Payment -->
+<div class="bg-surface rounded p-2 border-l-2 border-primary flex items-start gap-2 inner-glow">
+<div class="mt-1 bg-primary/10 p-1 rounded">
+<span class="material-symbols-outlined text-primary text-[16px]">check_circle</span>
+</div>
+<div>
+<div class="font-body-md text-[14px] font-semibold text-on-surface">Table 12 Bill Paid</div>
+<div class="font-body-md text-[11px] text-on-surface-variant mt-0.5">$345.20 • Server: Sarah M.</div>
+</div>
+<div class="ml-auto font-body-md text-[10px] text-on-surface-variant">Just now</div>
+</div>
+<!-- Feed Item 2: Alert -->
+<div class="bg-surface rounded p-2 border-l-2 border-error flex items-start gap-2 inner-glow">
+<div class="mt-1 bg-error/10 p-1 rounded">
+<span class="material-symbols-outlined text-error text-[16px]">warning</span>
+</div>
+<div>
+<div class="font-body-md text-[14px] font-semibold text-on-surface">Ticket #404 Delayed</div>
+<div class="font-body-md text-[11px] text-on-surface-variant mt-0.5">Grill station backed up (22m)</div>
+</div>
+<div class="ml-auto font-body-md text-[10px] text-on-surface-variant">2m ago</div>
+</div>
+<!-- Feed Item 3: Reservation -->
+<div class="bg-surface rounded p-2 border-l-2 border-tertiary-container flex items-start gap-2 inner-glow">
+<div class="mt-1 bg-tertiary-container/10 p-1 rounded">
+<span class="material-symbols-outlined text-tertiary-container text-[16px]">event</span>
+</div>
+<div>
+<div class="font-body-md text-[14px] font-semibold text-on-surface">New Reservation</div>
+<div class="font-body-md text-[11px] text-on-surface-variant mt-0.5">Party of 6 @ 8:30 PM • VIP</div>
+</div>
+<div class="ml-auto font-body-md text-[10px] text-on-surface-variant">5m ago</div>
+</div>
+<!-- Feed Item 4: Status -->
+<div class="bg-surface rounded p-2 border-l-2 border-secondary flex items-start gap-2 inner-glow opacity-75">
+<div class="mt-1 bg-secondary/10 p-1 rounded">
+<span class="material-symbols-outlined text-secondary text-[16px]">local_fire_department</span>
+</div>
+<div>
+<div class="font-body-md text-[14px] font-semibold text-on-surface">Table 4 Mains Fired</div>
+<div class="font-body-md text-[11px] text-on-surface-variant mt-0.5">4 items • Expo calling</div>
+</div>
+<div class="ml-auto font-body-md text-[10px] text-on-surface-variant">12m ago</div>
+</div>
+<!-- Feed Item 5: Status -->
+<div class="bg-surface rounded p-2 border-l-2 border-surface-variant flex items-start gap-2 inner-glow opacity-50">
+<div class="mt-1 bg-surface-variant p-1 rounded">
+<span class="material-symbols-outlined text-on-surface-variant text-[16px]">cleaning_services</span>
+</div>
+<div>
+<div class="font-body-md text-[14px] font-semibold text-on-surface">Table 8 Bus Requested</div>
+<div class="font-body-md text-[11px] text-on-surface-variant mt-0.5">Section 2</div>
+</div>
+<div class="ml-auto font-body-md text-[10px] text-on-surface-variant">15m ago</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Section: Top Items & Table Status -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter mt-4 pb-8">
+<!-- Top Selling Items Data Table -->
+<div class="bg-surface-container-lowest rounded-lg inner-glow overflow-hidden flex flex-col">
+<div class="p-4 border-b border-surface-variant bg-surface-container-lowest z-10 sticky top-0 flex justify-between items-center">
+<h3 class="font-headline-md text-[20px] font-semibold text-on-surface">Top Selling Items</h3>
+<button class="text-secondary text-[12px] font-body-md font-semibold hover:underline">View Menu Mix</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface border-b border-surface-variant">
+<th class="py-2 px-4 font-label-caps text-on-surface-variant uppercase text-[10px] tracking-wider w-8">#</th>
+<th class="py-2 px-4 font-label-caps text-on-surface-variant uppercase text-[10px] tracking-wider">Item Name</th>
+<th class="py-2 px-4 font-label-caps text-on-surface-variant uppercase text-[10px] tracking-wider text-right">Qty</th>
+<th class="py-2 px-4 font-label-caps text-on-surface-variant uppercase text-[10px] tracking-wider text-right">Rev</th>
+</tr>
+</thead>
+<tbody class="zebra-stripes font-body-md text-[14px]">
+<tr class="border-b border-surface-variant h-[40px] hover:bg-surface-container/50 transition-colors">
+<td class="py-1 px-4 text-on-surface-variant">1</td>
+<td class="py-1 px-4 text-on-surface font-semibold">Dry Aged Ribeye</td>
+<td class="py-1 px-4 text-right text-on-surface-variant">42</td>
+<td class="py-1 px-4 text-right text-primary">$3,570</td>
+</tr>
+<tr class="border-b border-surface-variant h-[40px] hover:bg-surface-container/50 transition-colors">
+<td class="py-1 px-4 text-on-surface-variant">2</td>
+<td class="py-1 px-4 text-on-surface font-semibold">Truffle Fries</td>
+<td class="py-1 px-4 text-right text-on-surface-variant">85</td>
+<td class="py-1 px-4 text-right text-primary">$1,190</td>
+</tr>
+<tr class="border-b border-surface-variant h-[40px] hover:bg-surface-container/50 transition-colors">
+<td class="py-1 px-4 text-on-surface-variant">3</td>
+<td class="py-1 px-4 text-on-surface font-semibold">Seared Scallops</td>
+<td class="py-1 px-4 text-right text-on-surface-variant">31</td>
+<td class="py-1 px-4 text-right text-primary">$1,085</td>
+</tr>
+<tr class="border-b border-surface-variant h-[40px] hover:bg-surface-container/50 transition-colors opacity-75">
+<td class="py-1 px-4 text-on-surface-variant">4</td>
+<td class="py-1 px-4 text-on-surface font-semibold">House Martini</td>
+<td class="py-1 px-4 text-right text-on-surface-variant">54</td>
+<td class="py-1 px-4 text-right text-primary">$972</td>
+</tr>
+<tr class="h-[40px] hover:bg-surface-container/50 transition-colors opacity-50">
+<td class="py-1 px-4 text-on-surface-variant">5</td>
+<td class="py-1 px-4 text-on-surface font-semibold">Caesar Salad</td>
+<td class="py-1 px-4 text-right text-on-surface-variant">48</td>
+<td class="py-1 px-4 text-right text-primary">$720</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Active Tables Quick Status (KDS Style) -->
+<div class="bg-surface-container-lowest rounded-lg inner-glow overflow-hidden flex flex-col p-4">
+<div class="flex justify-between items-center mb-4 pb-2 border-b border-surface-variant">
+<h3 class="font-headline-md text-[20px] font-semibold text-on-surface">Critical Tables</h3>
+<div class="flex gap-2">
+<span class="bg-error-container text-on-error-container px-2 py-0.5 rounded font-label-caps text-[10px] border border-error/50">Attention (2)</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-2">
+<!-- Table Card: Alert -->
+<div class="bg-surface border border-error rounded p-2 relative flex flex-col justify-between h-[120px]">
+<div class="flex justify-between items-start border-b border-surface-variant pb-1 mb-1">
+<span class="font-headline-lg text-[32px] font-bold text-on-surface leading-none">T4</span>
+<span class="bg-error text-on-error px-1.5 py-0.5 rounded font-label-caps text-[10px] animate-pulse">45m Wait</span>
+</div>
+<div class="flex-1 flex flex-col justify-center">
+<span class="font-label-caps text-[10px] uppercase text-error">Status: Mains Fired</span>
+<span class="font-body-md text-on-surface-variant text-[12px]">4 Covers • Server: Mike</span>
+</div>
+<div class="w-full h-1 bg-surface-variant rounded-full overflow-hidden mt-1">
+<div class="w-full h-full bg-error"></div>
+</div>
+</div>
+<!-- Table Card: Warning -->
+<div class="bg-surface border border-secondary rounded p-2 relative flex flex-col justify-between h-[120px]">
+<div class="flex justify-between items-start border-b border-surface-variant pb-1 mb-1">
+<span class="font-headline-lg text-[32px] font-bold text-on-surface leading-none">T12</span>
+<span class="bg-secondary text-on-secondary px-1.5 py-0.5 rounded font-label-caps text-[10px]">30m Wait</span>
+</div>
+<div class="flex-1 flex flex-col justify-center">
+<span class="font-label-caps text-[10px] uppercase text-secondary">Status: Apps Fired</span>
+<span class="font-body-md text-on-surface-variant text-[12px]">2 Covers • Server: Sarah</span>
+</div>
+<div class="w-full h-1 bg-surface-variant rounded-full overflow-hidden mt-1">
+<div class="w-[70%] h-full bg-secondary"></div>
+</div>
+</div>
+<!-- Table Card: Ready -->
+<div class="bg-surface border border-primary rounded p-2 relative flex flex-col justify-between h-[120px]">
+<div class="flex justify-between items-start border-b border-surface-variant pb-1 mb-1">
+<span class="font-headline-lg text-[32px] font-bold text-on-surface leading-none">T8</span>
+<span class="bg-primary text-on-primary px-1.5 py-0.5 rounded font-label-caps text-[10px]">Done</span>
+</div>
+<div class="flex-1 flex flex-col justify-center">
+<span class="font-label-caps text-[10px] uppercase text-primary">Status: Bill Paid</span>
+<span class="font-body-md text-on-surface-variant text-[12px]">Need Busser</span>
+</div>
+<div class="w-full h-1 bg-surface-variant rounded-full overflow-hidden mt-1">
+<div class="w-full h-full bg-primary"></div>
+</div>
+</div>
+<!-- Table Card: Normal -->
+<div class="bg-surface border border-surface-variant rounded p-2 relative flex flex-col justify-between h-[120px] opacity-75">
+<div class="flex justify-between items-start border-b border-surface-variant pb-1 mb-1">
+<span class="font-headline-lg text-[32px] font-bold text-on-surface leading-none">T22</span>
+<span class="bg-surface-variant text-on-surface px-1.5 py-0.5 rounded font-label-caps text-[10px]">10m In</span>
+</div>
+<div class="flex-1 flex flex-col justify-center">
+<span class="font-label-caps text-[10px] uppercase text-on-surface-variant">Status: Drinks</span>
+<span class="font-body-md text-on-surface-variant text-[12px]">6 Covers • Server: John</span>
+</div>
+<div class="w-full h-1 bg-surface-variant rounded-full overflow-hidden mt-1">
+<div class="w-[20%] h-full bg-outline/50"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<style>
+        /* Custom Scrollbar for light theme */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #fbf9f4; 
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e4e2dd; 
+            border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #c2c8c2; 
+        }
+    </style>
+</body></html>

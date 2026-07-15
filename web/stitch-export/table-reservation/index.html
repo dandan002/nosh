@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>rev - Reserve a Table</title>
+<!-- Tailwind CSS & Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#173124",
+                        "tertiary-fixed": "#d5e4f4",
+                        "surface-bright": "#fbf9f4",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f5f3ee",
+                        "secondary": "#7c5730",
+                        "primary-fixed-dim": "#b0cdbb",
+                        "outline-variant": "#c2c8c2",
+                        "on-tertiary-fixed-variant": "#3a4855",
+                        "primary-fixed": "#ccead6",
+                        "outline": "#727973",
+                        "surface-container": "#f0eee9",
+                        "secondary-container": "#fdcb9b",
+                        "on-primary": "#ffffff",
+                        "on-background": "#1b1c19",
+                        "inverse-surface": "#30312e",
+                        "surface-variant": "#e4e2dd",
+                        "error-container": "#ffdad6",
+                        "surface": "#fbf9f4",
+                        "on-tertiary-container": "#a1afbf",
+                        "error": "#ba1a1a",
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "inverse-primary": "#b0cdbb",
+                        "background": "#fbf9f4",
+                        "on-secondary-container": "#79542d",
+                        "tertiary": "#1f2d39",
+                        "secondary-fixed": "#ffdcbd",
+                        "on-primary-container": "#98b5a3",
+                        "tertiary-fixed-dim": "#b9c8d8",
+                        "secondary-fixed-dim": "#eebd8e",
+                        "primary-container": "#2d4739",
+                        "on-secondary-fixed-variant": "#61401b",
+                        "on-surface-variant": "#424844",
+                        "surface-dim": "#dbdad5",
+                        "tertiary-container": "#354350",
+                        "surface-tint": "#496455",
+                        "on-primary-fixed": "#062014",
+                        "surface-container-high": "#eae8e3",
+                        "on-tertiary-fixed": "#0f1d28",
+                        "surface-container-highest": "#e4e2dd",
+                        "on-primary-fixed-variant": "#324c3e",
+                        "on-secondary-fixed": "#2c1600",
+                        "inverse-on-surface": "#f2f1ec",
+                        "on-surface": "#1b1c19"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "max-width": "1440px",
+                        "margin-desktop": "40px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "unit": "8px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Geist", "sans-serif"],
+                        "headline-md": ["Geist", "sans-serif"],
+                        "label-caps": ["Geist", "sans-serif"],
+                        "headline-lg-mobile": ["Geist", "sans-serif"],
+                        "body-lg": ["Geist", "sans-serif"],
+                        "headline-lg": ["Geist", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "1.5", "letterSpacing": "0.02em", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "label-caps": ["12px", { "lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "letterSpacing": "0.01em", "fontWeight": "400" }],
+                        "headline-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Base typography & resets */
+        body {
+            font-family: 'Geist', sans-serif;
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+        }
+        
+        /* Material Symbols helper */
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1;
+        }
+
+        /* Floor plan grid pattern */
+        .floor-grid {
+            background-size: 40px 40px;
+            background-image: 
+                linear-gradient(to right, theme('colors.surface-variant') 1px, transparent 1px),
+                linear-gradient(to bottom, theme('colors.surface-variant') 1px, transparent 1px);
+        }
+
+        /* Hide scrollbar for clean details pane */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-body-md text-body-md selection:bg-primary-container selection:text-on-primary-container">
+<!-- Minimalist Customer-Facing Header (Overrides standard staff TopNavBar per destination rule) -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-surface-variant/50 transition-all duration-300">
+<div class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-4 flex justify-between items-center h-[72px]">
+<a class="flex items-center gap-2 group" href="#">
+<span class="material-symbols-outlined text-primary group-hover:-translate-x-1 transition-transform">arrow_back</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">Back</span>
+</a>
+<div class="absolute left-1/2 -translate-x-1/2">
+<span class="font-headline-md text-headline-md font-bold text-primary tracking-tight">rev</span>
+</div>
+<div class="w-[60px]"></div> <!-- Spacer for centering -->
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow pt-[104px] pb-margin-mobile md:pb-margin-desktop px-margin-mobile md:px-margin-desktop max-w-max-width mx-auto w-full">
+<!-- Header & Filters -->
+<div class="mb-8 flex flex-col gap-6">
+<div>
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-2">Select a Table</h1>
+<p class="text-on-surface-variant text-body-lg">Choose your preferred seating for the evening.</p>
+</div>
+<!-- Filter Bar: Date, Time, Guests -->
+<div class="bg-surface-container-lowest rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-surface-variant p-2 flex flex-col md:flex-row gap-2 md:items-center max-w-3xl">
+<button class="flex-1 flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-surface-container transition-colors text-left">
+<span class="material-symbols-outlined text-outline">calendar_today</span>
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Date</span>
+<span class="text-on-background font-medium">Sat, Oct 24</span>
+</div>
+</button>
+<div class="hidden md:block w-px h-10 bg-surface-variant"></div>
+<button class="flex-1 flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-surface-container transition-colors text-left">
+<span class="material-symbols-outlined text-outline">schedule</span>
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Time</span>
+<span class="text-on-background font-medium">19:30</span>
+</div>
+</button>
+<div class="hidden md:block w-px h-10 bg-surface-variant"></div>
+<button class="flex-1 flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-surface-container transition-colors text-left">
+<span class="material-symbols-outlined text-outline">group</span>
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Party Size</span>
+<span class="text-on-background font-medium">2 Guests</span>
+</div>
+</button>
+</div>
+</div>
+<!-- 12-Column Grid Layout -->
+<div class="grid grid-cols-4 md:grid-cols-12 gap-gutter items-start">
+<!-- Floor Plan (8 Columns) -->
+<div class="col-span-4 md:col-span-8 bg-surface-container-lowest rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.03)] border border-surface-variant overflow-hidden h-[600px] relative flex flex-col">
+<!-- Floor Plan Header Legend -->
+<div class="flex justify-between items-center p-6 border-b border-surface-variant bg-surface-container-lowest/80 backdrop-blur-md z-10 absolute top-0 w-full">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">Main Dining Room</span>
+<div class="flex gap-4">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full border-2 border-primary-fixed-dim bg-transparent"></div>
+<span class="text-[13px] text-on-surface-variant">Available</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-surface-variant border border-outline-variant"></div>
+<span class="text-[13px] text-on-surface-variant">Unavailable</span>
+</div>
+</div>
+</div>
+<!-- Interactive Floor Canvas -->
+<div class="flex-grow relative floor-grid mt-[72px] p-8 overflow-hidden">
+<!-- Structural Elements (Walls/Windows) -->
+<div class="absolute left-0 top-0 bottom-0 w-2 bg-surface-container-highest opacity-50"></div>
+<div class="absolute right-8 top-12 bottom-12 w-4 bg-tertiary-fixed-dim/30 rounded-full flex items-center justify-center writing-vertical">
+<span class="font-label-caps text-label-caps text-tertiary-container/50 uppercase tracking-widest rotate-180" style="writing-mode: vertical-rl;">Window View - Waterfront</span>
+</div>
+<!-- Tables Container -->
+<div class="relative w-full h-full">
+<!-- Table 1: Unavailable (Round) -->
+<button class="absolute top-[10%] left-[15%] w-24 h-24 rounded-full bg-surface-variant border border-outline-variant flex items-center justify-center opacity-70 cursor-not-allowed group">
+<span class="font-body-md text-on-surface-variant">T1</span>
+</button>
+<!-- Table 2: Available (Round) -->
+<button class="absolute top-[10%] left-[40%] w-24 h-24 rounded-full bg-surface-container-lowest border-2 border-primary-fixed-dim hover:border-primary hover:shadow-lg transition-all duration-300 flex items-center justify-center group" onclick="selectTable(this, '2')">
+<span class="font-body-md text-primary font-medium group-hover:scale-110 transition-transform">T2</span>
+<!-- Chairs indicator (decorative) -->
+<div class="absolute -top-3 w-4 h-2 bg-outline-variant rounded-t-sm"></div>
+<div class="absolute -bottom-3 w-4 h-2 bg-outline-variant rounded-b-sm"></div>
+<div class="absolute -left-3 w-2 h-4 bg-outline-variant rounded-l-sm"></div>
+<div class="absolute -right-3 w-2 h-4 bg-outline-variant rounded-r-sm"></div>
+</button>
+<!-- Table 3: Selected State Example (Rectangle) -->
+<button class="absolute top-[40%] left-[15%] w-20 h-32 rounded-xl bg-primary shadow-lg flex items-center justify-center group ring-4 ring-primary/20 scale-105 transition-all duration-300" id="table-3" onclick="selectTable(this, '3')">
+<span class="font-body-md text-on-primary font-medium">T3</span>
+<div class="absolute -left-3 top-4 w-2 h-8 bg-outline-variant/50 rounded-l-sm"></div>
+<div class="absolute -left-3 bottom-4 w-2 h-8 bg-outline-variant/50 rounded-l-sm"></div>
+<div class="absolute -right-3 top-4 w-2 h-8 bg-outline-variant/50 rounded-r-sm"></div>
+<div class="absolute -right-3 bottom-4 w-2 h-8 bg-outline-variant/50 rounded-r-sm"></div>
+</button>
+<!-- Table 4: Available Window (Rectangle) -->
+<button class="absolute top-[40%] right-[20%] w-32 h-20 rounded-xl bg-surface-container-lowest border-2 border-primary-fixed-dim hover:border-primary hover:shadow-lg transition-all duration-300 flex items-center justify-center group" onclick="selectTable(this, '4')">
+<span class="font-body-md text-primary font-medium group-hover:scale-110 transition-transform">T4</span>
+<div class="absolute -top-3 left-6 w-8 h-2 bg-outline-variant rounded-t-sm"></div>
+<div class="absolute -top-3 right-6 w-8 h-2 bg-outline-variant rounded-t-sm"></div>
+<div class="absolute -bottom-3 left-6 w-8 h-2 bg-outline-variant rounded-b-sm"></div>
+<div class="absolute -bottom-3 right-6 w-8 h-2 bg-outline-variant rounded-b-sm"></div>
+</button>
+<!-- Table 5: Unavailable (Booth) -->
+<div class="absolute bottom-[10%] left-[15%] w-48 h-24 bg-surface-container rounded-lg border border-outline-variant opacity-60 flex">
+<div class="w-8 h-full bg-surface-variant rounded-l-lg border-r border-outline-variant"></div>
+<div class="flex-grow flex items-center justify-center">
+<span class="font-body-md text-on-surface-variant">T5 (Reserved)</span>
+</div>
+<div class="w-8 h-full bg-surface-variant rounded-r-lg border-l border-outline-variant"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Details Panel (4 Columns) -->
+<div class="col-span-4 md:col-span-4 flex flex-col gap-6" id="details-panel">
+<!-- Selected Table Card -->
+<div class="bg-surface-container-lowest rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.03)] border border-surface-variant overflow-hidden flex flex-col h-[600px]">
+<!-- Image Area -->
+<div class="h-48 w-full relative">
+<div class="w-full h-full bg-cover bg-center" data-alt="A high-end, minimalist restaurant interior featuring a natural edge wood dining table bathed in soft, natural daylight. The setting overlooks a serene waterfront view through large floor-to-ceiling glass windows. The aesthetic is clean, warm, and sophisticated, utilizing a color palette of pacific slate, warm cedar accents, and soft off-whites. The mood is calm, inviting, and exclusively luxurious." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCc0wCsidjEcRUQMdPMNJklcjqyf7U1_fnGXALNeko5V0buwhPeLXApkAgTgx-e0al2ZIobfM3PGRWjah_gAzxjgvPwXALImf6ShieVGNJoHJ5TlXz7knCdjGxvvMG_IHMG7LxhwvDX9dJwamyPMXYZ-FLJ9dME4TFPT5N3lag4NQ-NhSTbo0-4KEgf7eYTlpUz4oNxU_sZGKukBcmNJVnzYL1R9iupPeXAdj_53a7QXtodWH0ubx-y1GL6vSPbs0hI2eKf1ARYH59Z')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div class="absolute bottom-4 left-6 right-6 flex justify-between items-end">
+<div>
+<span class="font-label-caps text-label-caps text-on-tertiary/80 uppercase tracking-widest block mb-1">Selected</span>
+<h2 class="font-headline-md text-headline-md text-on-tertiary font-bold" id="panel-title">Table 3</h2>
+</div>
+<div class="bg-surface-bright/20 backdrop-blur-md px-3 py-1 rounded-full border border-surface-bright/30">
+<span class="font-label-caps text-[11px] text-on-tertiary">2-4 Seats</span>
+</div>
+</div>
+</div>
+<!-- Details Content -->
+<div class="p-6 flex-grow flex flex-col no-scrollbar overflow-y-auto">
+<!-- Tags -->
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container text-on-surface-variant text-[13px] font-medium border border-surface-variant">
+<span class="material-symbols-outlined text-[16px]">water</span>
+                                Waterfront View
+                            </span>
+<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container text-on-surface-variant text-[13px] font-medium border border-surface-variant">
+<span class="material-symbols-outlined text-[16px]">volume_off</span>
+                                Quiet Area
+                            </span>
+</div>
+<p class="text-on-surface-variant mb-8 text-[15px] leading-relaxed">
+                            Nestled near the main structural column, Table 3 offers a slightly elevated vantage point of the dining room while maintaining an intimate atmosphere. Ideal for quiet conversations.
+                        </p>
+<!-- Available Times (Contextual to the selected table) -->
+<div class="mt-auto">
+<h3 class="font-label-caps text-label-caps text-on-background uppercase tracking-widest mb-4 border-b border-surface-variant pb-2">Available Slots</h3>
+<div class="grid grid-cols-3 gap-3 mb-6">
+<button class="py-2.5 rounded-xl border border-surface-variant hover:border-primary hover:bg-surface-container-lowest transition-colors text-center text-[15px] font-medium text-on-surface-variant opacity-50 cursor-not-allowed">
+                                    18:30
+                                </button>
+<button class="py-2.5 rounded-xl border-2 border-primary bg-primary/5 text-primary text-center text-[15px] font-medium transition-colors">
+                                    19:30
+                                </button>
+<button class="py-2.5 rounded-xl border border-outline-variant hover:border-primary hover:bg-surface-container-lowest transition-colors text-center text-[15px] font-medium text-on-background">
+                                    20:00
+                                </button>
+<button class="py-2.5 rounded-xl border border-outline-variant hover:border-primary hover:bg-surface-container-lowest transition-colors text-center text-[15px] font-medium text-on-background">
+                                    20:30
+                                </button>
+<button class="py-2.5 rounded-xl border border-surface-variant hover:border-primary hover:bg-surface-container-lowest transition-colors text-center text-[15px] font-medium text-on-surface-variant opacity-50 cursor-not-allowed">
+                                    21:00
+                                </button>
+</div>
+<!-- CTA (Warm Cedar color token mapping: bg-secondary) -->
+<button class="w-full bg-secondary hover:bg-secondary-container hover:text-on-secondary-container text-on-secondary font-body-md font-medium py-4 rounded-xl transition-all duration-300 shadow-md hover:shadow-lg active:scale-[0.98] flex justify-center items-center gap-2">
+                                Reserve Table
+                                <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Simple visual interaction script for demonstration
+        function selectTable(element, tableNum) {
+            // Reset all tables visually
+            const tables = document.querySelectorAll('#floor-plan button');
+            tables.forEach(t => {
+                if(!t.classList.contains('cursor-not-allowed')) {
+                    t.className = "absolute w-24 h-24 rounded-full bg-surface-container-lowest border-2 border-primary-fixed-dim hover:border-primary hover:shadow-lg transition-all duration-300 flex items-center justify-center group";
+                    // Restore specific shapes for demo if needed based on text content, 
+                    // but for this simple inline script, we just reset the classes.
+                    
+                    // Simple hack to keep rectangle shape for T4 in demo reset
+                    if(t.innerText.includes('T4')) {
+                         t.className = "absolute top-[40%] right-[20%] w-32 h-20 rounded-xl bg-surface-container-lowest border-2 border-primary-fixed-dim hover:border-primary hover:shadow-lg transition-all duration-300 flex items-center justify-center group";
+                    }
+                    if(t.innerText.includes('T2')) {
+                         t.className = "absolute top-[10%] left-[40%] w-24 h-24 rounded-full bg-surface-container-lowest border-2 border-primary-fixed-dim hover:border-primary hover:shadow-lg transition-all duration-300 flex items-center justify-center group";
+                    }
+                     if(t.innerText.includes('T3')) {
+                         t.className = "absolute top-[40%] left-[15%] w-20 h-32 rounded-xl bg-surface-container-lowest border-2 border-primary-fixed-dim hover:border-primary hover:shadow-lg transition-all duration-300 flex items-center justify-center group";
+                    }
+                }
+            });
+
+            // Set active state on clicked table
+            if(element.innerText.includes('T4') || element.innerText.includes('T3')) {
+                element.className = "absolute " + (element.innerText.includes('T4') ? "top-[40%] right-[20%] w-32 h-20" : "top-[40%] left-[15%] w-20 h-32") + " rounded-xl bg-primary shadow-lg flex items-center justify-center group ring-4 ring-primary/20 scale-105 transition-all duration-300";
+            } else {
+                 element.className = "absolute top-[10%] left-[40%] w-24 h-24 rounded-full bg-primary shadow-lg flex items-center justify-center group ring-4 ring-primary/20 scale-105 transition-all duration-300";
+            }
+            
+            element.innerHTML = `<span class="font-body-md text-on-primary font-medium">T${tableNum}</span>`;
+
+            // Update Panel Title
+            document.getElementById('panel-title').innerText = `Table ${tableNum}`;
+            
+            // Add subtle animation to panel to show update
+            const panel = document.getElementById('details-panel');
+            panel.style.opacity = '0.5';
+            setTimeout(() => {
+                panel.style.opacity = '1';
+                panel.style.transition = 'opacity 0.3s ease';
+            }, 50);
+        }
+    </script>
+</body></html>

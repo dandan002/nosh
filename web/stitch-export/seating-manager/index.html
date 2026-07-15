@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>rev - Seating Manager</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&amp;family=Inter:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "on-surface-variant": "#424844",
+                "outline": "#727973",
+                "surface-container-low": "#f5f3ee",
+                "secondary-fixed": "#ffdcbd",
+                "surface-bright": "#fbf9f4",
+                "surface-tint": "#496455",
+                "on-tertiary-container": "#a1afbf",
+                "secondary-fixed-dim": "#eebd8e",
+                "error-container": "#ffdad6",
+                "on-tertiary-fixed-variant": "#3a4855",
+                "on-secondary": "#ffffff",
+                "surface-variant": "#e4e2dd",
+                "surface-container-lowest": "#ffffff",
+                "on-primary-fixed": "#062014",
+                "surface-container": "#f0eee9",
+                "on-background": "#1b1c19",
+                "primary": "#173124",
+                "primary-fixed-dim": "#b0cdbb",
+                "inverse-primary": "#b0cdbb",
+                "on-tertiary-fixed": "#0f1d28",
+                "outline-variant": "#c2c8c2",
+                "on-secondary-container": "#79542d",
+                "surface-container-high": "#eae8e3",
+                "error": "#ba1a1a",
+                "secondary-container": "#fdcb9b",
+                "secondary": "#7c5730",
+                "on-tertiary": "#ffffff",
+                "primary-container": "#2d4739",
+                "tertiary-container": "#354350",
+                "on-secondary-fixed-variant": "#61401b",
+                "background": "#fbf9f4",
+                "on-primary-fixed-variant": "#324c3e",
+                "surface": "#fbf9f4",
+                "surface-container-highest": "#e4e2dd",
+                "on-surface": "#1b1c19",
+                "tertiary": "#1f2d39",
+                "surface-dim": "#dbdad5",
+                "on-secondary-fixed": "#2c1600",
+                "on-primary": "#ffffff",
+                "inverse-on-surface": "#f2f1ec",
+                "primary-fixed": "#ccead6",
+                "tertiary-fixed-dim": "#b9c8d8",
+                "on-primary-container": "#98b5a3",
+                "inverse-surface": "#30312e",
+                "on-error-container": "#93000a",
+                "on-error": "#ffffff",
+                "tertiary-fixed": "#d5e4f4"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "margin-desktop": "40px",
+                "max-width": "1440px",
+                "gutter": "24px",
+                "margin-mobile": "16px",
+                "unit": "8px"
+        },
+        "fontFamily": {
+                "headline-lg": [
+                        "Geist"
+                ],
+                "body-lg": [
+                        "Geist"
+                ],
+                "label-caps": [
+                        "Geist"
+                ],
+                "headline-lg-mobile": [
+                        "Geist"
+                ],
+                "headline-md": [
+                        "Geist"
+                ],
+                "body-md": [
+                        "Geist"
+                ]
+        },
+        "fontSize": {
+                "headline-lg": [
+                        "48px",
+                        {
+                                "lineHeight": "1.1",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "body-lg": [
+                        "18px",
+                        {
+                                "lineHeight": "1.6",
+                                "letterSpacing": "0.01em",
+                                "fontWeight": "400"
+                        }
+                ],
+                "label-caps": [
+                        "12px",
+                        {
+                                "lineHeight": "1",
+                                "letterSpacing": "0.1em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "headline-lg-mobile": [
+                        "32px",
+                        {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "-0.01em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "headline-md": [
+                        "24px",
+                        {
+                                "lineHeight": "1.3",
+                                "letterSpacing": "0.01em",
+                                "fontWeight": "500"
+                        }
+                ],
+                "body-md": [
+                        "16px",
+                        {
+                                "lineHeight": "1.5",
+                                "letterSpacing": "0.02em",
+                                "fontWeight": "400"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+<style>
+        body {
+            background-color: #fbf9f4;
+            color: #1b1c19;
+        }
+        
+        .floorplan-bg {
+            background-image: 
+                linear-gradient(to right, #e4e2dd 1px, transparent 1px),
+                linear-gradient(to bottom, #e4e2dd 1px, transparent 1px);
+            background-size: 40px 40px;
+            background-color: #f0eee9;
+        }
+    </style>
+</head>
+<body class="bg-background min-h-screen flex text-on-background">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full z-40 bg-surface h-screen w-20 hover:w-64 transition-all duration-300 overflow-hidden border-r border-outline-variant flex flex-col group">
+<div class="p-4 border-b border-outline-variant mb-4 flex items-center shrink-0">
+<div class="w-10 h-10 rounded-full bg-surface-variant overflow-hidden mr-3 shrink-0 flex items-center justify-center border border-outline-variant">
+<span class="material-symbols-outlined text-on-surface-variant" style="font-variation-settings: 'FILL' 1;">account_circle</span>
+</div>
+<div class="opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out whitespace-nowrap">
+<div class="font-headline-md text-headline-md font-bold text-primary leading-none">rev</div>
+<div class="font-label-caps text-label-caps text-primary mt-1">Dinner Service - Active</div>
+</div>
+</div>
+<div class="px-4 mb-6 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+<button class="w-full bg-primary-container text-on-primary-container font-body-md text-body-md py-2 rounded flex items-center justify-center gap-2 hover:bg-opacity-90 transition-colors">
+<span class="material-symbols-outlined">add</span>
+                New Order
+            </button>
+</div>
+<nav class="flex-1 overflow-y-auto w-full px-2">
+<a class="text-on-surface-variant flex items-center px-4 py-3 hover:bg-surface-container-high hover:text-on-surface transition-all duration-200 ease-in-out rounded-lg mb-1 group/item" href="#">
+<span class="material-symbols-outlined mr-4 group-hover/item:text-primary">dashboard</span>
+<span class="font-body-md text-body-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">Dashboard</span>
+</a>
+<a class="text-primary font-bold border-l-4 border-primary bg-secondary-container flex items-center px-4 py-3 hover:bg-surface-container-high hover:text-on-surface transition-all duration-200 ease-in-out rounded-r-lg mb-1 group/item" href="#">
+<span class="material-symbols-outlined mr-4">event_seat</span>
+<span class="font-body-md text-body-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">Seating</span>
+</a>
+<a class="text-on-surface-variant flex items-center px-4 py-3 hover:bg-surface-container-high hover:text-on-surface transition-all duration-200 ease-in-out rounded-lg mb-1 group/item" href="#">
+<span class="material-symbols-outlined mr-4 group-hover/item:text-primary">receipt_long</span>
+<span class="font-body-md text-body-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">Orders</span>
+</a>
+<a class="text-on-surface-variant flex items-center px-4 py-3 hover:bg-surface-container-high hover:text-on-surface transition-all duration-200 ease-in-out rounded-lg mb-1 group/item" href="#">
+<span class="material-symbols-outlined mr-4 group-hover/item:text-primary">payments</span>
+<span class="font-body-md text-body-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">Billing</span>
+</a>
+<a class="text-on-surface-variant flex items-center px-4 py-3 hover:bg-surface-container-high hover:text-on-surface transition-all duration-200 ease-in-out rounded-lg mb-1 group/item" href="#">
+<span class="material-symbols-outlined mr-4 group-hover/item:text-primary">restaurant_menu</span>
+<span class="font-body-md text-body-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">Menu</span>
+</a>
+<a class="text-on-surface-variant flex items-center px-4 py-3 hover:bg-surface-container-high hover:text-on-surface transition-all duration-200 ease-in-out rounded-lg mb-1 group/item" href="#">
+<span class="material-symbols-outlined mr-4 group-hover/item:text-primary">analytics</span>
+<span class="font-body-md text-body-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">Analytics</span>
+</a>
+</nav>
+<div class="p-2 border-t border-outline-variant mt-auto">
+<a class="text-on-surface-variant flex items-center px-4 py-3 hover:bg-surface-container-high hover:text-on-surface transition-all duration-200 ease-in-out rounded-lg mb-1 group/item" href="#">
+<span class="material-symbols-outlined mr-4 group-hover/item:text-primary">settings</span>
+<span class="font-body-md text-body-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">Settings</span>
+</a>
+<a class="text-on-surface-variant flex items-center px-4 py-3 hover:bg-surface-container-high hover:text-on-surface transition-all duration-200 ease-in-out rounded-lg group/item" href="#">
+<span class="material-symbols-outlined mr-4 group-hover/item:text-error">logout</span>
+<span class="font-body-md text-body-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap group-hover/item:text-error">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 ml-20 flex flex-col h-screen overflow-hidden bg-background">
+<!-- TopNavBar -->
+<header class="bg-surface border-b border-outline-variant flex justify-between items-center w-full px-margin-desktop py-unit shrink-0 h-16 z-30">
+<div class="flex-1"></div>
+<div class="flex items-center gap-gutter">
+<span class="font-label-caps text-label-caps text-primary px-3 py-1 bg-surface-container rounded border border-outline-variant">Dinner Service - Active</span>
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors scale-95 active:opacity-80 hover:bg-surface-container">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors scale-95 active:opacity-80 hover:bg-surface-container">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-variant overflow-hidden ml-2 border border-outline-variant cursor-pointer hover:border-primary transition-colors">
+<img alt="Manager Avatar" class="w-full h-full object-cover" data-alt="Close up profile picture of a modern restaurant manager looking competent and professional in a dark modern industrial setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDp5ZHMp-r7ag0GIctvp0-eABvaauSKWd5gOm6MRW51VkQ446HFhh7e5kd4C0ttALxQ-GXRTq4mmdg2lzNYo7SJxzuqBQfctkT9CkJkjxeJMXJlNXIUnO-C77ASeHk0GV6sfAcUl5OO7x0DA_rvYBcwnhDJ4YVk3msPc0cHlc_3QobkvkK0xNGI_D915bxXBbAYhNVK0SCFpDrGtG5ZMiPYkHOfchUu4GDVUhAt5FfGDx-Vgyn7Ug1Aj6lncyQwcwWgTt9av0wrVvyb"/>
+</div>
+</div>
+</header>
+<!-- Seating Manager Layout -->
+<div class="flex-1 flex overflow-hidden">
+<!-- Floor Plan Canvas -->
+<div class="flex-1 flex flex-col relative overflow-hidden bg-surface-container">
+<!-- Controls & Legend Bar -->
+<div class="h-14 border-b border-outline-variant bg-surface flex items-center justify-between px-gutter shrink-0 z-10 shadow-sm">
+<div class="flex items-center gap-gutter">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant text-sm">layers</span>
+<span class="font-body-md text-body-md font-semibold text-on-surface">Main Dining Room</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary">expand_more</span>
+</div>
+<div class="h-6 w-px bg-outline-variant mx-2"></div>
+<div class="flex items-center gap-unit">
+<button class="px-3 py-1 border border-outline-variant rounded text-on-surface font-label-caps text-label-caps hover:border-primary hover:bg-surface-container-high transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">magic_button</span> Auto-Assign
+                            </button>
+<button class="px-3 py-1 border border-outline-variant rounded text-on-surface font-label-caps text-label-caps hover:border-primary hover:bg-surface-container-high transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">join</span> Merge Tables
+                            </button>
+</div>
+</div>
+<div class="flex items-center gap-gutter font-label-caps text-label-caps text-on-surface-variant">
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 rounded-full border-2 border-primary"></div>
+<span>Available (12)</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 rounded-full bg-primary-container border-2 border-primary-container"></div>
+<span class="text-primary-container">Occupied (24)</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 rounded-full border-2 border-primary border-dashed"></div>
+<span>Reserved (4)</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 rounded-full bg-surface-variant border-2 border-surface-variant"></div>
+<span>Dirty (3)</span>
+</div>
+</div>
+</div>
+<!-- Interactive Floorplan -->
+<div class="flex-1 floorplan-bg relative overflow-auto cursor-grab active:cursor-grabbing p-8">
+<!-- Floorplan Container (Simulated Scale) -->
+<div class="relative w-[1000px] h-[800px] mx-auto mt-10">
+<!-- Table 1: Occupied (Round) -->
+<div class="absolute top-[10%] left-[20%] group">
+<div class="w-24 h-24 rounded-full bg-primary-container border-4 border-primary-container shadow-md flex flex-col items-center justify-center cursor-pointer hover:brightness-110 transition-all inset-shadow-sm active:scale-95">
+<span class="font-headline-md text-headline-md text-on-primary-container">T1</span>
+<span class="font-label-caps text-label-caps text-on-primary-container bg-white/30 px-2 py-0.5 rounded-full mt-1">45:12</span>
+</div>
+</div>
+<!-- Table 2: Available (Round) -->
+<div class="absolute top-[10%] left-[45%]">
+<div class="w-24 h-24 rounded-full bg-surface border-2 border-primary shadow-sm flex flex-col items-center justify-center cursor-pointer hover:bg-primary/10 transition-all active:scale-95">
+<span class="font-headline-md text-headline-md text-primary">T2</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant mt-1">4 Seats</span>
+</div>
+</div>
+<!-- Table 3: Reserved (Rectangular) -->
+<div class="absolute top-[35%] left-[20%]">
+<div class="w-32 h-20 rounded bg-surface border-2 border-primary border-dashed shadow-sm flex flex-col items-center justify-center cursor-pointer hover:bg-primary/5 transition-all active:scale-95">
+<span class="font-headline-md text-headline-md text-primary">T3</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant mt-1">Smith · 19:30</span>
+</div>
+</div>
+<!-- Table 4: Dirty (Rectangular) -->
+<div class="absolute top-[35%] left-[50%]">
+<div class="w-40 h-20 rounded bg-surface-variant border-2 border-surface-variant shadow-sm flex flex-col items-center justify-center cursor-pointer hover:bg-outline-variant transition-all active:scale-95 opacity-80">
+<span class="font-headline-md text-headline-md text-on-surface-variant">T4</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">cleaning_services</span> Bus
+                                </span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Side Panel (Waitlist & Reservations) -->
+<div class="w-80 bg-surface border-l border-outline-variant flex flex-col shrink-0 z-20 shadow-[-4px_0_15px_rgba(0,0,0,0.05)]">
+<div class="p-4 border-b border-outline-variant flex gap-2">
+<button class="flex-1 py-2 font-body-md text-body-md font-semibold text-primary border-b-2 border-primary">Waitlist (3)</button>
+<button class="flex-1 py-2 font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors">Upcoming (12)</button>
+</div>
+<div class="flex-1 overflow-y-auto p-3 space-y-3">
+<!-- Waitlist Card 1 -->
+<div class="bg-surface-container-low border border-outline-variant rounded-lg p-3 hover:border-primary transition-colors cursor-pointer shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="font-body-lg text-body-lg font-medium text-on-surface">Johnson Party</h3>
+<div class="font-body-md text-body-md text-on-surface-variant flex items-center gap-2 mt-1">
+<span class="material-symbols-outlined text-[16px]">group</span> 4 guests
+                                    <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span>Walk-in</span>
+</div>
+</div>
+<span class="font-label-caps text-label-caps text-primary-container bg-primary-container/10 px-2 py-1 rounded">15m wait</span>
+</div>
+<div class="mt-3 flex gap-2">
+<button class="flex-1 bg-primary-container text-on-primary-container font-body-md text-body-md py-1.5 rounded hover:brightness-110 transition-all">Seat</button>
+<button class="w-10 flex items-center justify-center border border-outline-variant rounded text-on-surface hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-[18px]">sms</span>
+</button>
+</div>
+</div>
+<!-- Waitlist Card 2 -->
+<div class="bg-surface-container-low border border-outline-variant rounded-lg p-3 hover:border-primary transition-colors cursor-pointer shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="font-body-lg text-body-lg font-medium text-on-surface">Miller</h3>
+<div class="font-body-md text-body-md text-on-surface-variant flex items-center gap-2 mt-1">
+<span class="material-symbols-outlined text-[16px]">group</span> 2 guests
+                                </div>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant bg-surface-container px-2 py-1 rounded border border-outline-variant">05m wait</span>
+</div>
+<div class="mt-3 flex gap-2">
+<button class="flex-1 bg-primary-container text-on-primary-container font-body-md text-body-md py-1.5 rounded hover:brightness-110 transition-all">Seat</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

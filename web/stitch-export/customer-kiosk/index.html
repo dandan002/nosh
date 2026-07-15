@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>rev Customer Kiosk</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet"/>
+<style>
+        @font-face {
+            font-family: 'Geist';
+            src: url('https://cdn.jsdelivr.net/gh/fontsource/geist-sans@main/fonts/variable/wght.woff2') format('woff2');
+            font-weight: 100 900;
+            font-display: swap;
+            font-style: normal;
+        }
+        
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        
+        /* Ensure safe area for fixed bottom nav on mobile/kiosk */
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom, 24px);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed-dim": "#b9c8d8",
+                        "on-error": "#ffffff",
+                        "on-primary-container": "#98b5a3",
+                        "on-error-container": "#93000a",
+                        "inverse-surface": "#30312e",
+                        "tertiary-fixed": "#d5e4f4",
+                        "surface-dim": "#dbdad5",
+                        "on-secondary-fixed": "#2c1600",
+                        "tertiary": "#1f2d39",
+                        "on-primary": "#ffffff",
+                        "inverse-on-surface": "#f2f1ec",
+                        "primary-fixed": "#ccead6",
+                        "tertiary-container": "#354350",
+                        "primary-container": "#2d4739",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed-variant": "#324c3e",
+                        "on-secondary-fixed-variant": "#61401b",
+                        "background": "#fbf9f4",
+                        "surface": "#fbf9f4",
+                        "surface-container-highest": "#e4e2dd",
+                        "on-surface": "#1b1c19",
+                        "primary": "#173124",
+                        "on-background": "#1b1c19",
+                        "surface-container": "#f0eee9",
+                        "on-primary-fixed": "#062014",
+                        "primary-fixed-dim": "#b0cdbb",
+                        "inverse-primary": "#b0cdbb",
+                        "surface-container-high": "#eae8e3",
+                        "outline-variant": "#c2c8c2",
+                        "on-tertiary-fixed": "#0f1d28",
+                        "on-secondary-container": "#79542d",
+                        "secondary-container": "#fdcb9b",
+                        "secondary": "#7c5730",
+                        "error": "#ba1a1a",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#3a4855",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-variant": "#e4e2dd",
+                        "surface-bright": "#fbf9f4",
+                        "surface-tint": "#496455",
+                        "on-tertiary-container": "#a1afbf",
+                        "error-container": "#ffdad6",
+                        "secondary-fixed-dim": "#eebd8e",
+                        "secondary-fixed": "#ffdcbd",
+                        "on-surface-variant": "#424844",
+                        "outline": "#727973",
+                        "surface-container-low": "#f5f3ee"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "max-width": "1440px",
+                        "margin-desktop": "40px",
+                        "gutter": "24px",
+                        "unit": "8px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Geist"],
+                        "headline-lg": ["Geist"],
+                        "label-caps": ["Geist"],
+                        "headline-md": ["Geist"],
+                        "headline-lg-mobile": ["Geist"],
+                        "body-lg": ["Geist"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "1.5", "letterSpacing": "0.02em", "fontWeight": "400" }],
+                        "headline-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "label-caps": ["12px", { "lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "letterSpacing": "0.01em", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col antialiased selection:bg-primary-container selection:text-on-primary-container overflow-x-hidden">
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col pb-[100px] md:pb-0 pt-4 md:pt-margin-desktop px-margin-mobile md:px-margin-desktop max-w-max-width mx-auto w-full relative z-10">
+<!-- Header -->
+<header class="flex justify-between items-center mb-8">
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-primary tracking-tight">rev</h1>
+<div class="flex items-center gap-4 bg-surface-container rounded-full px-4 py-2 shadow-sm border border-surface-variant">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="search" data-weight="fill" style="font-variation-settings: 'FILL' 1;">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-on-surface placeholder-on-surface-variant w-32 md:w-48 font-body-md outline-none" placeholder="Search menu..." type="text"/>
+</div>
+</header>
+<!-- Hero Section - Featured -->
+<section class="mb-12 relative rounded-[24px] overflow-hidden shadow-lg border border-surface-variant">
+<div class="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/40 to-transparent z-10 mix-blend-multiply"></div>
+<div class="relative h-64 md:h-96 w-full bg-surface-variant">
+<img class="w-full h-full object-cover absolute inset-0" data-alt="A cinematic, high-resolution close-up of an artfully plated cedar-plank salmon. The dish is garnished with vibrant, fresh microgreens and a drizzle of rich, dark balsamic reduction. The lighting is moody and natural, suggesting a Pacific Northwest fine dining atmosphere with a minimalist, clean aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAA78i3AW87dndCrd_dgDuZNnyYSPmByuYqhDasalpdJf7UOs5VWNGH5p6jtLH8etSa_LLktSpQZC0l4mq-lXrELSKBvSvT3nywo4aYq2UT56FMdxhyszL85FXYk2XzDxmrAR3njaVjYjen5MPvwM_-mE4aEdBiP3x8isT1H6odOR2dFxrJwRlRxXOFCQ9d8ATrEvlRQyq5UdMQxH0yg-5e4puNn0GR1Awiikidjn6810eF0SYaeL5xhloyh1siVgqtqLB3R_qH2nBm"/>
+</div>
+<div class="absolute bottom-0 left-0 p-6 md:p-10 z-20 w-full flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<span class="inline-block px-3 py-1 bg-surface/20 backdrop-blur-md rounded-full font-label-caps text-on-primary mb-3 border border-white/20">Chef's Feature</span>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-on-primary text-balance">Cedar Plank Salmon</h2>
+<p class="font-body-md text-on-primary/90 mt-2 max-w-xl">Wild-caught Sockeye, lemon-dill infused, served with roasted seasonal root vegetables.</p>
+</div>
+<button class="bg-primary-container hover:bg-primary-fixed-dim text-on-primary-container font-body-md px-8 py-4 rounded-xl transition-colors duration-200 shadow-sm flex items-center justify-center gap-2 group whitespace-nowrap">
+<span class="font-semibold">$34.00</span>
+<span class="w-px h-4 bg-on-primary-container/30 mx-2"></span>
+<span>Add to Order</span>
+<span class="material-symbols-outlined group-hover:translate-x-1 transition-transform" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</section>
+<!-- Category Scroller -->
+<nav class="mb-10 relative">
+<div class="flex overflow-x-auto no-scrollbar gap-4 pb-4 -mx-margin-mobile px-margin-mobile md:mx-0 md:px-0 snap-x">
+<button class="snap-start shrink-0 px-6 py-3 rounded-full bg-primary text-on-primary font-body-md shadow-sm border border-transparent transition-all">Fresh Catch</button>
+<button class="snap-start shrink-0 px-6 py-3 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface font-body-md border border-surface-variant transition-all">Garden</button>
+<button class="snap-start shrink-0 px-6 py-3 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface font-body-md border border-surface-variant transition-all">Cellar</button>
+<button class="snap-start shrink-0 px-6 py-3 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface font-body-md border border-surface-variant transition-all">Wood-Fired</button>
+<button class="snap-start shrink-0 px-6 py-3 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface font-body-md border border-surface-variant transition-all">Desserts</button>
+<button class="snap-start shrink-0 px-6 py-3 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface font-body-md border border-surface-variant transition-all">Beverages</button>
+</div>
+<!-- Fade masks for scroller -->
+<div class="absolute top-0 right-0 h-full w-12 bg-gradient-to-l from-background to-transparent pointer-events-none md:hidden"></div>
+<div class="absolute top-0 left-0 h-full w-4 bg-gradient-to-r from-background to-transparent pointer-events-none md:hidden"></div>
+</nav>
+<!-- Menu Grid -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-gutter mb-20">
+<!-- Item Card 1 -->
+<article class="bg-surface rounded-xl overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-surface-variant flex flex-col group hover:shadow-[0_8px_32px_rgba(0,0,0,0.08)] transition-shadow duration-300">
+<div class="relative h-48 bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" data-alt="A top-down view of a vibrant, fresh heirloom tomato and burrata salad. The tomatoes are sliced, showing rich reds, yellows, and greens. A generous ball of creamy white burrata sits in the center, drizzled with olive oil and sprinkled with sea salt and fresh basil leaves. The setting is clean, bright, and organic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTe63IXWawHOp-feU0Eu4soZcM1S8062knEGz9o3ktYiZjpTubzTWnUvLCIfHlIF4vvcP2XXQ7pBk9LCyvnyJ8quZ-s9gMvJYmNlF7hbi5vky4qdNwoUssArnawr0w2csVJSQNDGYqG4wnaJjH4Oh9VFOEEsSa0jYmMlSmHyrTWZdTf4EpLdksSIKBmjQgSduJ6VEX1yT7Kb3OnAwejbnuyaWIDNkxbofvTanjH-lJ1p6Rw-WmUjlCJf6t18b1_QJFdtoy04rp54O5"/>
+<div class="absolute top-3 right-3 bg-surface/80 backdrop-blur-md p-1.5 rounded-full shadow-sm text-primary">
+<span class="material-symbols-outlined text-sm" data-icon="eco">eco</span>
+</div>
+</div>
+<div class="p-5 flex-grow flex flex-col">
+<div class="flex justify-between items-start mb-2 gap-4">
+<h3 class="font-headline-md text-on-surface leading-tight">Heirloom Burrata</h3>
+<span class="font-headline-md text-primary shrink-0">$18</span>
+</div>
+<p class="font-body-md text-on-surface-variant text-sm line-clamp-2 mb-6">Locally sourced heirloom tomatoes, fresh basil, aged balsamic, cold-pressed olive oil.</p>
+<div class="mt-auto pt-4 border-t border-surface-container-high">
+<button class="w-full bg-surface-container-high hover:bg-primary text-on-surface hover:text-on-primary py-3 rounded-lg font-body-md transition-colors duration-200 flex items-center justify-center gap-2 group/btn">
+<span class="material-symbols-outlined text-lg" data-icon="add">add</span>
+<span>Add</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Item Card 2 -->
+<article class="bg-surface rounded-xl overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-surface-variant flex flex-col group hover:shadow-[0_8px_32px_rgba(0,0,0,0.08)] transition-shadow duration-300">
+<div class="relative h-48 bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" data-alt="A beautifully seared scallop dish served on a dark, slate plate. The scallops have a perfect golden-brown crust and are resting on a vibrant green pea purée. Small, delicate micro-cilantro garnishes the dish. The lighting is dramatic but natural, highlighting the textures of the food in a minimalist setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBT7ukATLyjn7DWhEh7JsRJd_M72Z3nNfSK0xYAqFmPx5o_Hs6Qvlkf0JMTrWsbe_8PCQBTSawRzUsGDMF2bdzHs96XHOARUqNJ-R1GZfHM2MQD6DTmrrQ0VwLiusiS0gfrFIjQ473TEiUk31TqsHnzDbtID16cp8wzZ_h4kdcXnu5nPc4hyMx_upkyuu9liH3odbB63xmqfBVIbTQWBj-hG0Yln_ZjLka0q4kJL_fDcxciGXdq-B5VnR31I1q-rDVFvdYXfaYJ3kAf"/>
+</div>
+<div class="p-5 flex-grow flex flex-col">
+<div class="flex justify-between items-start mb-2 gap-4">
+<h3 class="font-headline-md text-on-surface leading-tight">Seared Scallops</h3>
+<span class="font-headline-md text-primary shrink-0">$26</span>
+</div>
+<p class="font-body-md text-on-surface-variant text-sm line-clamp-2 mb-6">Jumbo diver scallops, sweet pea purée, pancetta crisp, micro-greens.</p>
+<div class="mt-auto pt-4 border-t border-surface-container-high">
+<button class="w-full bg-surface-container-high hover:bg-primary text-on-surface hover:text-on-primary py-3 rounded-lg font-body-md transition-colors duration-200 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-lg" data-icon="add">add</span>
+<span>Add</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Item Card 3 -->
+<article class="bg-surface rounded-xl overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-surface-variant flex flex-col group hover:shadow-[0_8px_32px_rgba(0,0,0,0.08)] transition-shadow duration-300">
+<div class="relative h-48 bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" data-alt="A rustic, artisan wood-fired flatbread pizza on a wooden serving board. The crust is blistered and charred in spots. It is topped with wild mushrooms, melted fontina cheese, and scattered fresh thyme sprigs. The aesthetic is warm, organic, and grounded, evoking a cozy yet refined dining experience." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8voUp-nuRLLGKymggMaLBSxyoXtccyFu-HhNFHX9KoEOcnmPjB5lD4f8nh2uDXp3ywPtzTin9Q7tYXLuRBMbjn1BRFK_mHMG3F6CGv-hsSLMqR5tamsBUymB8Ho5W3j6wIlnimYaT14kbAgyFhUAtJEPkt1k4lN7Pq3EJhlKAxJQgV20nvmTHJpKBF21hZ9E5Duul871r7ofq9MbLY_EsiwpTEVr7YUtcwUxh_Lsa7E5-xIkVRsXBBJdhW0FZUGO0hewFj9Tv6ZFZ"/>
+</div>
+<div class="p-5 flex-grow flex flex-col">
+<div class="flex justify-between items-start mb-2 gap-4">
+<h3 class="font-headline-md text-on-surface leading-tight">Wild Mushroom Flatbread</h3>
+<span class="font-headline-md text-primary shrink-0">$22</span>
+</div>
+<p class="font-body-md text-on-surface-variant text-sm line-clamp-2 mb-6">Foraged seasonal mushrooms, fontina, truffle oil, fresh thyme, blistered crust.</p>
+<div class="mt-auto pt-4 border-t border-surface-container-high">
+<button class="w-full bg-surface-container-high hover:bg-primary text-on-surface hover:text-on-primary py-3 rounded-lg font-body-md transition-colors duration-200 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-lg" data-icon="add">add</span>
+<span>Add</span>
+</button>
+</div>
+</div>
+</article>
+</section>
+</main>
+<!-- BottomNavBar (Mobile Kiosk Navigation) -->
+<nav class="md:hidden bg-surface dark:bg-surface-container-low shadow-[0_-4px_20px_rgba(0,0,0,0.04)] fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 pb-safe rounded-t-xl border-t border-surface-variant">
+<button class="flex flex-col items-center justify-center bg-secondary-container dark:bg-secondary-fixed text-on-secondary-container dark:text-on-secondary-fixed-variant rounded-full px-6 py-2 active:scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined mb-1" data-icon="category" data-weight="fill" style="font-variation-settings: 'FILL' 1;">category</span>
+<span class="font-label-caps text-label-caps">Categories</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant p-2 hover:text-primary dark:hover:text-primary-fixed-dim active:scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined mb-1" data-icon="shopping_basket">shopping_basket</span>
+<span class="font-label-caps text-label-caps">Cart</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant p-2 hover:text-primary dark:hover:text-primary-fixed-dim active:scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined mb-1" data-icon="receipt_long">receipt_long</span>
+<span class="font-label-caps text-label-caps">My Order</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant p-2 hover:text-primary dark:hover:text-primary-fixed-dim active:scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined mb-1" data-icon="person_alert">person_alert</span>
+<span class="font-label-caps text-label-caps">Call Staff</span>
+</button>
+</nav>
+<!-- Desktop Floating Action / Checkout (Visible only on larger screens where BottomNav is hidden) -->
+<div class="hidden md:block fixed bottom-8 right-8 z-50">
+<button class="bg-primary hover:bg-primary-container text-on-primary shadow-lg rounded-2xl px-6 py-4 flex items-center gap-3 transition-transform hover:-translate-y-1 duration-200 border border-primary-fixed-dim/20">
+<div class="relative">
+<span class="material-symbols-outlined" data-icon="shopping_basket">shopping_basket</span>
+<span class="absolute -top-2 -right-2 bg-error text-on-error font-label-caps text-[10px] w-5 h-5 flex items-center justify-center rounded-full border-2 border-primary">2</span>
+</div>
+<div class="flex flex-col text-left pr-4 border-r border-on-primary/20">
+<span class="font-label-caps text-on-primary/80">View Cart</span>
+<span class="font-body-md font-semibold text-on-primary">$60.00</span>
+</div>
+<span class="material-symbols-outlined text-on-primary/60" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</body></html>

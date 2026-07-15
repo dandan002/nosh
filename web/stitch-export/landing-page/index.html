@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>rev - The Operating System for Modern Hospitality</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-container-lowest": "#ffffff",
+                      "on-secondary-fixed-variant": "#61401b",
+                      "tertiary-fixed-dim": "#b9c8d8",
+                      "background": "#fbf9f4",
+                      "on-surface": "#1b1c19",
+                      "on-secondary": "#ffffff",
+                      "surface-container-high": "#eae8e3",
+                      "on-secondary-container": "#79542d",
+                      "on-primary-fixed-variant": "#324c3e",
+                      "surface": "#fbf9f4",
+                      "outline-variant": "#c2c8c2",
+                      "inverse-on-surface": "#f2f1ec",
+                      "secondary-container": "#fdcb9b",
+                      "surface-bright": "#fbf9f4",
+                      "on-primary": "#ffffff",
+                      "secondary": "#7c5730",
+                      "inverse-primary": "#b0cdbb",
+                      "surface-variant": "#e4e2dd",
+                      "primary": "#173124",
+                      "outline": "#727973",
+                      "on-tertiary-container": "#a1afbf",
+                      "primary-fixed": "#ccead6",
+                      "error": "#ba1a1a",
+                      "on-surface-variant": "#424844",
+                      "error-container": "#ffdad6",
+                      "on-secondary-fixed": "#2c1600",
+                      "surface-container-highest": "#e4e2dd",
+                      "on-primary-fixed": "#062014",
+                      "on-error": "#ffffff",
+                      "on-tertiary": "#ffffff",
+                      "surface-container": "#f0eee9",
+                      "primary-fixed-dim": "#b0cdbb",
+                      "on-primary-container": "#98b5a3",
+                      "on-background": "#1b1c19",
+                      "surface-tint": "#496455",
+                      "tertiary-fixed": "#d5e4f4",
+                      "tertiary": "#1f2d39",
+                      "surface-dim": "#dbdad5",
+                      "primary-container": "#2d4739",
+                      "on-tertiary-fixed": "#0f1d28",
+                      "inverse-surface": "#30312e",
+                      "on-error-container": "#93000a",
+                      "on-tertiary-fixed-variant": "#3a4855",
+                      "secondary-fixed-dim": "#eebd8e",
+                      "tertiary-container": "#354350",
+                      "secondary-fixed": "#ffdcbd",
+                      "surface-container-low": "#f5f3ee"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "gutter": "24px",
+                      "unit": "8px",
+                      "margin-desktop": "40px",
+                      "margin-mobile": "16px",
+                      "max-width": "1440px"
+              },
+              "fontFamily": {
+                      "body-lg": ["Geist"],
+                      "body-md": ["Geist"],
+                      "headline-lg-mobile": ["Geist"],
+                      "label-caps": ["Geist"],
+                      "headline-md": ["Geist"],
+                      "headline-lg": ["Geist"]
+              },
+              "fontSize": {
+                      "body-lg": ["18px", {"lineHeight": "1.6", "letterSpacing": "0.01em", "fontWeight": "400"}],
+                      "body-md": ["16px", {"lineHeight": "1.5", "letterSpacing": "0.02em", "fontWeight": "400"}],
+                      "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "600"}],
+                      "headline-md": ["24px", {"lineHeight": "1.3", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                      "headline-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+        }
+        .ambient-shadow {
+            box-shadow: 0 10px 40px -10px rgba(23, 49, 36, 0.06);
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col font-body-md text-body-md">
+<!-- Suppressed Nav Shell since this is a landing page -->
+<main class="flex-grow">
+<!-- Hero Section -->
+<section class="relative pt-32 pb-24 px-margin-mobile md:px-margin-desktop max-w-[1440px] mx-auto flex flex-col items-center justify-center min-h-[819px] text-center overflow-hidden">
+<div class="absolute inset-0 z-0 opacity-40">
+<!-- Abstract organic shapes hinting at a floorplan -->
+<div class="absolute top-10 left-10 w-96 h-96 bg-primary-fixed/20 rounded-full blur-3xl mix-blend-multiply"></div>
+<div class="absolute bottom-10 right-10 w-[500px] h-[500px] bg-secondary-fixed/20 rounded-full blur-3xl mix-blend-multiply"></div>
+</div>
+<div class="relative z-10 max-w-4xl flex flex-col items-center gap-unit">
+<span class="font-label-caps text-label-caps text-secondary tracking-widest uppercase mb-4">Introducing rev</span>
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-6">
+                    The Operating System for Modern Hospitality
+                </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mb-10">
+                    A sophisticated, airy, and intuitive platform designed to balance the ruggedness of high-pressure environments with seamless, organic flow. Elevate your restaurant's precision and calm.
+                </p>
+<div class="flex flex-col sm:flex-row gap-4">
+<button class="bg-secondary text-on-secondary px-8 py-4 rounded-lg font-body-md text-body-md font-medium hover:bg-on-secondary-container transition-colors shadow-lg shadow-secondary/20">
+                        Get Started
+                    </button>
+<button class="bg-transparent border border-outline text-primary px-8 py-4 rounded-lg font-body-md text-body-md font-medium hover:bg-surface-container-high transition-colors">
+                        Book a Demo
+                    </button>
+</div>
+</div>
+<div class="relative w-full mt-20 z-10">
+<div class="aspect-video w-full max-w-5xl mx-auto rounded-xl overflow-hidden ambient-shadow border border-surface-dim/50 bg-surface">
+<img class="w-full h-full object-cover" data-alt="A clean, minimalist high-end restaurant management software dashboard displayed on a sleek modern monitor. The UI features generous whitespace, soft ambient shadows, and a subtle color palette of sage greens, deep forest greens, and warm cedar accents. The dashboard shows a stylized floor plan and key metrics in a glassmorphism style, evoking a calm, organized, and sophisticated atmosphere typical of Pacific Northwest modernism." src="https://lh3.googleusercontent.com/aida-public/AB6AXuApTV-JzX0vVXwaAiPMkJHmJXCoL3Ooh0QJOhKh6QhYRKx91zzPhGyXBA7wQJCRaitsWLoDE7d_LlzGqPmbdujxfht3RaxGB6qGtUpWoLCzFIxTz1wD1krMa3wi-pbUQcyYMSG3-aLHNrkC64CmCNTZoC_0KZEIYrAL-JqSkz2h4v-FOkjzumrKsM3A-Xz5jIHVB27epY7IssPXmoRmsTu0znXDYKHYtxjE-eYDSgN3_Nm2njCEgUa1-90viXmndBKKMaA7VGMNP5dW"/>
+</div>
+</div>
+</section>
+<!-- Features Bento Grid -->
+<section class="py-24 px-margin-mobile md:px-margin-desktop max-w-[1440px] mx-auto bg-surface-container-lowest">
+<div class="text-center mb-16 max-w-2xl mx-auto">
+<h2 class="font-headline-md text-headline-md text-primary mb-4">Precision in Every Detail</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                    Designed for high-end operators who value clarity and flow, avoiding cognitive overload.
+                </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Real-time Floor Plans (Large spanning item) -->
+<div class="col-span-1 md:col-span-8 bg-surface rounded-xl p-8 ambient-shadow border border-surface-variant flex flex-col justify-between h-[400px] overflow-hidden relative group">
+<div class="relative z-10 max-w-md">
+<span class="material-symbols-outlined text-secondary mb-4 text-3xl">grid_view</span>
+<h3 class="font-headline-md text-headline-md text-primary mb-2">Real-time Floor Plans</h3>
+<p class="text-on-surface-variant">Navigate your dining room with a tactile, organic map that reflects the actual flow of your space. Instantly see table status, turn times, and optimize seating without friction.</p>
+</div>
+<div class="absolute bottom-0 right-0 w-2/3 h-2/3 translate-y-12 translate-x-12 group-hover:translate-y-8 group-hover:translate-x-8 transition-transform duration-500 rounded-tl-xl overflow-hidden border-t border-l border-surface-variant shadow-lg">
+<img class="w-full h-full object-cover object-left-top" data-alt="A stylized, minimalist architectural floor plan of a modern restaurant rendered as a digital UI component. It features geometric shapes representing tables in soft stone tones, with subtle sage green indicators for available seating. The design is clean, high-contrast, and uses significant whitespace, embodying a sophisticated Pacific Northwest modern aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjivyI9uwmdkfFyGix3MMN_FtOO46PIx-7XP1RmYPYriAmv85G-bZrTSDKBtpx0Gz23nsGiyRZNjwPmJtc7wHjevVBWd6EP4N2B32pQmASLeIw4lfS4NS6EkKyuAtmmkZ3wmO8sD1F_EIlzJLUAz0ob9ZpTT5893V4okR_kFy3icLQnP6IYQW8qD-M0hdTzsGlItzzoSHSSGfey_ixbcaVAJbmuc-GpUpthf2yNnO6-TpgI7cmXwlMWI3KHhIJRg9aBvvP_l3SRFMk"/>
+</div>
+</div>
+<!-- Kitchen Harmony (Tall side item) -->
+<div class="col-span-1 md:col-span-4 bg-primary text-on-primary rounded-xl p-8 ambient-shadow flex flex-col justify-between h-[400px] relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-b from-transparent to-primary-container/80 z-0"></div>
+<div class="relative z-10 h-full flex flex-col">
+<span class="material-symbols-outlined text-inverse-primary mb-4 text-3xl">restaurant_menu</span>
+<h3 class="font-headline-md text-headline-md text-on-primary mb-2">Kitchen Harmony</h3>
+<p class="text-primary-fixed-dim flex-grow">Synchronize the front and back of house. Orders flow logically, formatted for quick reading in high-pressure environments. Status tones are muted and calming.</p>
+<div class="mt-4 space-y-3">
+<div class="bg-surface-container-highest/20 backdrop-blur-md border border-white/10 rounded-lg p-3 flex items-center justify-between">
+<span class="font-label-caps text-label-caps tracking-wide">Table 12</span>
+<span class="text-xs px-2 py-1 bg-inverse-primary/20 text-inverse-primary rounded">Firing</span>
+</div>
+<div class="bg-surface-container-highest/20 backdrop-blur-md border border-white/10 rounded-lg p-3 flex items-center justify-between">
+<span class="font-label-caps text-label-caps tracking-wide">Table 04</span>
+<span class="text-xs px-2 py-1 bg-secondary-fixed/20 text-secondary-fixed-dim rounded">Plating</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Insights (Wide bottom item) -->
+<div class="col-span-1 md:col-span-12 bg-surface-container-low rounded-xl p-8 ambient-shadow border border-surface-variant flex flex-col md:flex-row gap-8 items-center h-auto md:h-[300px]">
+<div class="flex-1">
+<span class="material-symbols-outlined text-secondary mb-4 text-3xl">analytics</span>
+<h3 class="font-headline-md text-headline-md text-primary mb-2">Insights that Drive Growth</h3>
+<p class="text-on-surface-variant mb-6">Move beyond basic reporting. Understand your peak hours, menu performance, and staff efficiency through clean, minimal dashboards that highlight what matters most, leaving the noise behind.</p>
+<a class="text-primary font-medium hover:text-secondary transition-colors inline-flex items-center gap-1" href="#">
+                            Explore Analytics <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+</div>
+<div class="flex-1 w-full h-48 md:h-full rounded-lg overflow-hidden border border-surface-variant shadow-sm relative">
+<!-- Abstract representation of a chart -->
+<div class="absolute inset-0 bg-surface p-4 flex items-end gap-2">
+<div class="w-1/6 bg-surface-container-highest rounded-t-sm h-1/3"></div>
+<div class="w-1/6 bg-primary-container rounded-t-sm h-2/3"></div>
+<div class="w-1/6 bg-secondary-container rounded-t-sm h-1/2"></div>
+<div class="w-1/6 bg-surface-container-highest rounded-t-sm h-3/4"></div>
+<div class="w-1/6 bg-primary rounded-t-sm h-full"></div>
+<div class="w-1/6 bg-secondary rounded-t-sm h-5/6"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Testimonial -->
+<section class="py-24 px-margin-mobile md:px-margin-desktop bg-surface border-t border-b border-surface-variant">
+<div class="max-w-4xl mx-auto text-center">
+<span class="material-symbols-outlined text-secondary text-4xl mb-6 block" style="font-variation-settings: 'FILL' 1;">format_quote</span>
+<p class="font-headline-md text-headline-md text-primary mb-8 italic">
+                    "rev brought a sense of calm to our evening service. The interface is completely invisible until you need it, and when you do, it feels like an extension of our own natural workflow. It's transformed how we manage our space."
+                </p>
+<div class="flex items-center justify-center gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-dim border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a female restaurant manager in her 40s with a warm, confident expression. She is wearing a modern, minimalist dark linen chef's coat. The background is slightly out of focus, showing a bright, airy restaurant interior with natural wood accents and large windows, reflecting a Pacific Northwest modern aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8HuwCXE9mvHg7sTCL4j1lp22eEFTRHWrcTtBRnSjYTI_Z_dPIAmViCOGqSWiPq1iOqOGaSGcbOw2g0Ppdxdy33ETjM2jUXaLFrFN4EqVLyksV9Vo121KhGHCHQ0MgySAIxi25jdUw-KKVL-qAjYj2awVMAGKJ_UWKK77XH57QbkWGSLV_m4PhW3rDFuXMb3hMcdcXAYLgDpOZAAkKNfWvxl23nM9CcZmdHZwPSZ7BLHVp6UllixwIB5lfuSdeHTqLPWyMIA-ETGd-"/>
+</div>
+<div class="text-left">
+<div class="font-body-md text-body-md font-medium text-primary">Sarah Jenkins</div>
+<div class="text-sm text-on-surface-variant">Operations Director, The Cedar Room</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest pt-16 pb-8 border-t border-surface-variant">
+<div class="max-w-[1440px] mx-auto px-margin-mobile md:px-margin-desktop flex flex-col md:flex-row justify-between items-start gap-8 mb-12">
+<div class="max-w-xs">
+<div class="font-headline-md text-headline-md font-bold text-primary mb-4">rev</div>
+<p class="text-sm text-on-surface-variant">
+                    The quiet engine running modern hospitality. Designed in the Pacific Northwest.
+                </p>
+</div>
+<div class="flex gap-16">
+<div>
+<h4 class="font-label-caps text-label-caps text-primary mb-4">Product</h4>
+<ul class="space-y-2 text-sm text-on-surface-variant">
+<li><a class="hover:text-secondary transition-colors" href="#">Floor Plan</a></li>
+<li><a class="hover:text-secondary transition-colors" href="#">Kitchen Hub</a></li>
+<li><a class="hover:text-secondary transition-colors" href="#">Insights</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-label-caps text-label-caps text-primary mb-4">Company</h4>
+<ul class="space-y-2 text-sm text-on-surface-variant">
+<li><a class="hover:text-secondary transition-colors" href="#">About</a></li>
+<li><a class="hover:text-secondary transition-colors" href="#">Careers</a></li>
+<li><a class="hover:text-secondary transition-colors" href="#">Contact</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="max-w-[1440px] mx-auto px-margin-mobile md:px-margin-desktop pt-8 border-t border-surface-variant flex flex-col md:flex-row justify-between items-center text-xs text-on-surface-variant">
+<p>© 2024 rev Hospitality Systems. All rights reserved.</p>
+<div class="flex gap-4 mt-4 md:mt-0">
+<a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="hover:text-primary transition-colors" href="#">Terms of Service</a>
+</div>
+</div>
+</footer>
+</body></html>
