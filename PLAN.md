@@ -77,23 +77,33 @@ Key decisions:
 
 **Bug fix (user-reported, 2026-07-16):** Table delete ("x" button) silently did nothing. Root cause: the button sits inside the table marker's draggable `div`; pressing it bubbled a `pointerdown` up to the drag handler, which called `setPointerCapture` on the marker and redirected the browser's click-event targeting, so the button's `onClick` (the actual delete) often never fired. Fixed with `onPointerDown={(e) => e.stopPropagation()}` on the button. Live-verified: reproduced the confirm dialog firing, deleted a table through the real UI, confirmed via direct DB query it was gone.
 
-**Not started:**
-- [ ] Menu management — categories, items, modifier groups CRUD
-- [ ] Order entry — pick table/session, browse menu, add items + modifiers, "send to kitchen"
-- [ ] Kitchen display — realtime tickets grouped by order/table, tap to advance status
-- [ ] Delivery/completion tracking — server sees "ready" items live, marks delivered
-- [ ] Realtime wiring (Supabase Realtime on `order_items`/`tables`/`table_sessions`)
-- [ ] Responsive/tablet polish pass
-- [ ] Demo-restaurant seed script
-- [ ] Playwright E2E smoke test (seat table → order → kitchen → deliver)
+**Done (menu management, 2026-07-16):**
+- [x] `app/[restaurantSlug]/admin/menu/page.tsx` + `components/menu/{menu-workspace,category-manager,item-form,item-row,modifier-panel}.tsx` — manager-only CRUD for menu categories, items (name/description/price/active), modifier groups (single/multiple selection, required flag), and modifiers (name + price delta). Non-managers get a read-only view (no sidebar, no edit affordances, modifier groups rendered as plain text) — same `isManagerOrAbove()` gate as the floor plan editor. `lib/data/menu.ts`, `lib/actions/menu.ts`, `lib/validations/menu.ts` follow the same conventions as their `floor.ts` counterparts (RLS is the real enforcement; UPDATE/DELETE `.select()`s the affected row since an RLS-blocked mutation matches zero rows rather than erroring). Sidebar's "Menu" nav item flipped from `available: false` to `true`.
+- [x] **Live-verified** against the real Supabase project: created a test restaurant via the actual signup → onboarding flow, added a category, item (with price/description), modifier group, and modifier through the real UI, edited the item's price, toggled it unavailable — confirmed each via direct DB query. Logged in as a second `server`-role test account and confirmed the read-only view (no sidebar, no edit controls, unavailable item shown struck through, modifiers as plain text) via a Playwright screenshot. `get_advisors` showed no new WARNs. Test data cleaned up afterward.
 
-### Phase B — billing fast-follow (not started)
-- [ ] Stripe Connect Express account onboarding per restaurant
-- [ ] Check generation from a session's `order_items`
-- [ ] Payment collection (destination charges, `application_fee_amount`)
-- [ ] Split billing (even / by-seat / by-item)
-- [ ] Tips, receipts, transaction history/reporting
-- [ ] `checks`, `check_items`, `payments`, `stripe_webhook_events` migrations
+**Done (order entry, 2026-07-16):**
+- [x] `app/[restaurantSlug]/orders/page.tsx` — table picker (`components/orders/table-picker.tsx`): grid of tables per floor section, reusing `floor-plan-styles.ts`; `server`-or-above staff can seat an available table (party size form → `seatTable` creates a `table_sessions` row, sets the table `occupied`, redirects into the session) or jump back into an occupied table's session via "View Order."
+- [x] `app/[restaurantSlug]/orders/[sessionId]/page.tsx` — order entry screen (`components/orders/order-entry-workspace.tsx`): category tabs over `getOrderableMenu()` (active items only), click-to-add; items with modifier groups open `modifier-picker.tsx` (single/multiple selection, required-group validation blocks "Add to order," quantity stepper, optional notes). `components/orders/ticket.tsx` renders the client-side draft (editable quantity/remove) above the read-only history of already-fired orders (with per-item status), plus a subtotal/tax-estimate/total and "Fire to Kitchen."
+- [x] `fireOrder` (`lib/actions/orders.ts`) re-reads `menu_items.price_cents`/`modifiers.price_delta_cents` from the DB rather than trusting the client, then inserts one `orders` row (`status: 'fired'`) plus `order_items`/`order_item_modifiers` snapshotting those prices — mirrors the snapshot rationale already documented in `0002_floor_menu_orders.sql`. Not wrapped in a DB transaction (sequential inserts, same accepted-risk tradeoff as elsewhere in this codebase); a mid-loop failure can leave a partial ticket, worth revisiting if it ever bites.
+- [x] Displayed tax on the ticket is a hardcoded 8% placeholder for the running total shown while building an order — not wired to any real config; Phase B billing owns the actual tax/check calculation.
+- [x] Sidebar's "Orders" nav item flipped from `available: false` to `true`.
+- [x] **Live-verified** against the real Supabase project: seeded one floor section/table and one menu item with a required modifier group directly via SQL (menu/floor CRUD itself was already verified in prior phases), then drove the actual UI end-to-end as `test@rev.dev` — seated the table, opened the modifier picker, confirmed "Add to order" stays disabled until the required group has a selection, added a line with a modifier + notes, bumped quantity, fired to kitchen, and confirmed via direct DB query that the order/order_item/order_item_modifier rows persisted with the correct snapshotted price, quantity, and notes. Confirmed the floor/orders table picker correctly flips the table to "Occupied" with a working "View Order" link back into the session. `get_advisors` showed no new WARNs. This seed data was left in place in the persistent `test-kitchen` restaurant (see README "Test login") as a ready-made fixture for testing the next phase (kitchen display).
+
+**Not started** (tracked as GitHub issues, milestone [Phase A — core service loop](https://github.com/dandan002/nosh/milestone/1)):
+- [ ] Kitchen display — realtime tickets grouped by order/table, tap to advance status ([#2](https://github.com/dandan002/nosh/issues/2))
+- [ ] Wire Supabase Realtime on `order_items`/`tables`/`table_sessions` ([#3](https://github.com/dandan002/nosh/issues/3))
+- [ ] Delivery/completion tracking — server sees "ready" items live, marks delivered ([#4](https://github.com/dandan002/nosh/issues/4))
+- [ ] Responsive/tablet polish pass ([#5](https://github.com/dandan002/nosh/issues/5))
+- [ ] Demo-restaurant seed script ([#6](https://github.com/dandan002/nosh/issues/6))
+- [ ] Playwright E2E smoke test (seat table → order → kitchen → deliver) ([#7](https://github.com/dandan002/nosh/issues/7))
+
+### Phase B — billing fast-follow (not started, milestone [Phase B — billing fast-follow](https://github.com/dandan002/nosh/milestone/2))
+- [ ] `checks`, `check_items`, `payments`, `stripe_webhook_events` migrations ([#8](https://github.com/dandan002/nosh/issues/8))
+- [ ] Stripe Connect Express account onboarding per restaurant ([#9](https://github.com/dandan002/nosh/issues/9))
+- [ ] Check generation from a session's `order_items` ([#10](https://github.com/dandan002/nosh/issues/10))
+- [ ] Payment collection (destination charges, `application_fee_amount`) ([#11](https://github.com/dandan002/nosh/issues/11))
+- [ ] Split billing (even / by-seat / by-item) ([#12](https://github.com/dandan002/nosh/issues/12))
+- [ ] Tips, receipts, transaction history/reporting ([#13](https://github.com/dandan002/nosh/issues/13))
 
 ## Repo Structure (as built)
 
@@ -106,14 +116,14 @@ nosh/                          (repo root; product name is "rev", folder name un
     app/
       (auth pages: login/, signup/, auth/confirm, auth/auth-code-error)
       onboarding/restaurant/
-      [restaurantSlug]/         (layout.tsx = tenant shell; floor/ = visualization + admin editor)
+      [restaurantSlug]/         (layout.tsx = tenant shell; floor/ = visualization + admin editor; admin/menu/ = menu management; orders/ = table picker + order entry)
       page.tsx                  (redirects to last restaurant or onboarding)
-    components/{ui,auth,nav,floor}/
+    components/{ui,auth,nav,floor,menu,orders}/
     lib/
       supabase/{client,server}.ts
-      actions/{auth,onboarding,floor}.ts
-      validations/{auth,onboarding,floor}.ts
-      data/{restaurant,floor}.ts
+      actions/{auth,onboarding,floor,menu,orders}.ts
+      validations/{auth,onboarding,floor,menu,orders}.ts
+      data/{restaurant,floor,menu,orders}.ts
       floor-plan-styles.ts
       slug.ts (+ slug.test.ts)
     proxy.ts
@@ -129,8 +139,8 @@ nosh/                          (repo root; product name is "rev", folder name un
 1. ~~Migrations for the remaining Phase A tables~~ — done, `0002_floor_menu_orders.sql`.
 2. ~~Floor plan visualization (read-only)~~ — done, `app/[restaurantSlug]/floor`.
 3. ~~Floor plan admin editor~~ — done, `components/floor/`.
-4. Menu management CRUD.
-5. Order entry screen.
+4. ~~Menu management CRUD~~ — done, `app/[restaurantSlug]/admin/menu`, `components/menu/`.
+5. ~~Order entry screen~~ — done, `app/[restaurantSlug]/orders`, `components/orders/`.
 6. Kitchen display + Supabase Realtime wiring.
 7. Delivery/completion tracking to close the Phase A loop.
 8. Seed script + Playwright smoke test once the loop is end-to-end.
