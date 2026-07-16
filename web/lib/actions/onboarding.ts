@@ -45,16 +45,23 @@ export async function createRestaurant(
   for (let attempt = 0; attempt < MAX_SLUG_ATTEMPTS; attempt++) {
     slug = attempt === 0 ? baseSlug : `${baseSlug}-${attempt + 1}`;
 
-    const { data: restaurant, error } = await supabase
+    // Generate the id client-side and skip .select() after insert: at this
+    // point no staff_members row exists yet linking this user to the new
+    // restaurant, so the "members can read their restaurant" SELECT policy
+    // would reject the RETURNING read-back INSERT normally does, even
+    // though the INSERT itself is allowed. Knowing the id up front avoids
+    // needing to read it back at all.
+    restaurantId = crypto.randomUUID();
+
+    const { error } = await supabase
       .from("restaurants")
-      .insert({ name, slug })
-      .select("id")
-      .single();
+      .insert({ id: restaurantId, name, slug });
 
     if (!error) {
-      restaurantId = restaurant.id;
       break;
     }
+
+    restaurantId = null;
 
     // 23505 = unique_violation; retry with a different slug suffix.
     if (error.code !== "23505") {

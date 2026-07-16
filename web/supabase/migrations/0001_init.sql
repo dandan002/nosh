@@ -72,13 +72,18 @@ as $$
   limit 1;
 $$;
 
--- SECURITY DEFINER functions are granted EXECUTE to PUBLIC by default,
--- making them callable by anon. Restrict to authenticated: these only
--- expose a boolean/enum scoped to the caller's own auth.uid(), but there's
--- no reason for a signed-out request to reach them at all.
+-- SECURITY DEFINER functions are granted EXECUTE to PUBLIC by default, and
+-- Supabase's default privileges additionally grant EXECUTE directly to anon
+-- at creation time (a direct grant, not just inherited via PUBLIC) — so
+-- revoking from PUBLIC alone leaves anon still able to call these. Revoke
+-- from both explicitly. These only expose a boolean/enum scoped to the
+-- caller's own auth.uid(), but there's no reason for a signed-out request
+-- to reach them at all.
 revoke all on function is_restaurant_member(uuid) from public;
+revoke execute on function is_restaurant_member(uuid) from anon;
 grant execute on function is_restaurant_member(uuid) to authenticated;
 revoke all on function staff_role_for(uuid) from public;
+revoke execute on function staff_role_for(uuid) from anon;
 grant execute on function staff_role_for(uuid) to authenticated;
 
 alter table restaurants enable row level security;
@@ -108,15 +113,33 @@ create policy "members can read staff in their restaurant"
   to authenticated
   using (is_restaurant_member(restaurant_id));
 
-create policy "owners and admins can manage staff in their restaurant"
-  on staff_members for all
+-- Split by command rather than "for all": a SELECT policy here would be
+-- pure overlap with "members can read staff in their restaurant" above
+-- (owners/admins are already members), which the RLS performance linter
+-- flags as a redundant extra policy evaluation on every read.
+create policy "owners and admins can add staff to their restaurant"
+  on staff_members for insert
+  to authenticated
+  with check (staff_role_for(restaurant_id) in ('owner', 'admin'));
+
+create policy "owners and admins can update staff in their restaurant"
+  on staff_members for update
   to authenticated
   using (staff_role_for(restaurant_id) in ('owner', 'admin'))
   with check (staff_role_for(restaurant_id) in ('owner', 'admin'));
 
+create policy "owners and admins can remove staff from their restaurant"
+  on staff_members for delete
+  to authenticated
+  using (staff_role_for(restaurant_id) in ('owner', 'admin'));
+
 -- A user creating a brand-new restaurant needs to insert their own owner
 -- row before any staff_members rows for that restaurant exist (so the
--- "owners and admins can manage staff" policy above can't apply yet).
+-- "owners and admins can add staff" policy above can't apply yet). This
+-- necessarily overlaps with that policy on INSERT (self-bootstrap vs.
+-- admin-invites-staff are two distinct valid paths) — an accepted, low-cost
+-- exception to the "no redundant policies" rule since staff_members INSERT
+-- is infrequent.
 create policy "users can insert their own owner membership"
   on staff_members for insert
   to authenticated
