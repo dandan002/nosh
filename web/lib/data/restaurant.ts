@@ -9,10 +9,17 @@ export type StaffRole = "owner" | "admin" | "manager" | "server" | "kitchen";
 
 // Mirrors is_manager_or_above() in supabase/migrations/0002_floor_menu_orders.sql
 // — the single client-side source of truth for "can write structural config"
-// so features (floor plan, and soon menu management) don't each hand-roll
-// their own role-tier array and risk it drifting from the SQL helper.
+// so features (floor plan, menu management) don't each hand-roll their own
+// role-tier array and risk it drifting from the SQL helper.
 export function isManagerOrAbove(role: StaffRole): boolean {
   return role === "owner" || role === "admin" || role === "manager";
+}
+
+// Mirrors is_server_or_above() in supabase/migrations/0002_floor_menu_orders.sql
+// — servers (plus everyone above them) can run the day-to-day service loop:
+// seat tables, open sessions, and fire orders.
+export function isServerOrAbove(role: StaffRole): boolean {
+  return isManagerOrAbove(role) || role === "server";
 }
 
 // Wrapped in React's cache() so the tenant-shell layout and every page under

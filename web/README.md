@@ -18,6 +18,14 @@ React Hook Form. Deployed on Vercel.
    See `supabase/README.md` for creating the project and applying migrations.
 3. `pnpm dev` and open http://localhost:3000
 
+### Test login
+
+A persistent `owner`-role account on the "rev" Supabase project:
+
+- Email: `test@rev.dev`
+- Password: `RevTest123!`
+- Restaurant: `test-kitchen` (lands on `/test-kitchen/floor` after login)
+
 ## Design reference
 
 `stitch-export/` contains the Stitch-generated screen mockups this app is
