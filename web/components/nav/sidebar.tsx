@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 const NAV_ITEMS = [
   { href: "floor", label: "Seating", icon: "event_seat", available: true },
   { href: "orders", label: "Orders", icon: "receipt_long", available: true },
+  { href: "kitchen", label: "Kitchen", icon: "soup_kitchen", available: true },
   { href: "billing", label: "Billing", icon: "payments", available: false },
   { href: "admin/menu", label: "Menu", icon: "restaurant_menu", available: true },
   { href: "admin/analytics", label: "Analytics", icon: "analytics", available: false },

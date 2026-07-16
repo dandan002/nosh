@@ -1,7 +1,10 @@
 "use client";
 
+import { useState, useTransition } from "react";
+
 import type { FiredOrder } from "@/lib/data/orders";
 import type { ModifierSelection } from "@/components/orders/modifier-picker";
+import { moveOrderItemStatus } from "@/lib/actions/kitchen";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/icon";
 
@@ -38,9 +41,54 @@ const ITEM_STATUS_LABEL: Record<string, string> = {
   cancelled: "Cancelled",
 };
 
+function UnsendButton({
+  orderItemId,
+  itemLabel,
+  restaurantSlug,
+  sessionPath,
+}: {
+  orderItemId: string;
+  itemLabel: string;
+  restaurantSlug: string;
+  sessionPath: string;
+}) {
+  const [pending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
+
+  return (
+    <div className="flex flex-col items-end gap-1 shrink-0">
+      <Button
+        variant="ghost"
+        size="icon"
+        disabled={pending}
+        title="Unsend"
+        onClick={() => {
+          if (!window.confirm(`Unsend ${itemLabel}? The kitchen hasn't started it yet.`)) return;
+          setError(null);
+          startTransition(async () => {
+            const result = await moveOrderItemStatus(
+              orderItemId,
+              restaurantSlug,
+              "fired",
+              "cancelled",
+              sessionPath,
+            );
+            if (result?.error) setError(result.error);
+          });
+        }}
+      >
+        <Icon name="undo" className="text-base text-error" />
+      </Button>
+      {error ? <p className="font-label-caps text-label-caps text-error">{error}</p> : null}
+    </div>
+  );
+}
+
 export function Ticket({
   draftLines,
   firedOrders,
+  restaurantSlug,
+  sessionPath,
   onIncrement,
   onDecrement,
   onRemove,
@@ -50,6 +98,8 @@ export function Ticket({
 }: {
   draftLines: DraftLine[];
   firedOrders: FiredOrder[];
+  restaurantSlug: string;
+  sessionPath: string;
   onIncrement: (key: string) => void;
   onDecrement: (key: string) => void;
   onRemove: (key: string) => void;
@@ -60,16 +110,19 @@ export function Ticket({
   const draftSubtotal = draftLines.reduce((sum, line) => sum + lineTotalCents(line), 0);
   const draftTax = Math.round(draftSubtotal * DISPLAY_TAX_RATE);
 
+  // Cancelled (unsent) items don't count toward the bill.
   const firedSubtotal = firedOrders.reduce(
     (sum, order) =>
       sum +
-      order.items.reduce(
-        (itemSum, item) =>
-          itemSum +
-          (item.unitPriceCents + item.modifiers.reduce((s, m) => s + m.priceDeltaCents, 0)) *
-            item.quantity,
-        0,
-      ),
+      order.items
+        .filter((item) => item.status !== "cancelled")
+        .reduce(
+          (itemSum, item) =>
+            itemSum +
+            (item.unitPriceCents + item.modifiers.reduce((s, m) => s + m.priceDeltaCents, 0)) *
+              item.quantity,
+          0,
+        ),
     0,
   );
 
@@ -91,8 +144,14 @@ export function Ticket({
             <div className="flex flex-col gap-2">
               {order.items.map((item) => (
                 <div key={item.id} className="flex items-start justify-between gap-2">
-                  <div>
-                    <p className="font-body-md text-body-md text-on-surface">
+                  <div className={item.status === "cancelled" ? "opacity-50" : undefined}>
+                    <p
+                      className={
+                        item.status === "cancelled"
+                          ? "font-body-md text-body-md text-on-surface line-through"
+                          : "font-body-md text-body-md text-on-surface"
+                      }
+                    >
                       {item.quantity}&times; {item.menuItemName}
                     </p>
                     {item.modifiers.map((modifier) => (
@@ -109,9 +168,18 @@ export function Ticket({
                       </p>
                     ) : null}
                   </div>
-                  <span className="font-label-caps text-label-caps text-on-surface-variant shrink-0">
-                    {ITEM_STATUS_LABEL[item.status] ?? item.status}
-                  </span>
+                  {item.status === "fired" ? (
+                    <UnsendButton
+                      orderItemId={item.id}
+                      itemLabel={`${item.quantity}× ${item.menuItemName}`}
+                      restaurantSlug={restaurantSlug}
+                      sessionPath={sessionPath}
+                    />
+                  ) : (
+                    <span className="font-label-caps text-label-caps text-on-surface-variant shrink-0">
+                      {ITEM_STATUS_LABEL[item.status] ?? item.status}
+                    </span>
+                  )}
                 </div>
               ))}
             </div>

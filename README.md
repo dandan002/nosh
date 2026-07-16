@@ -58,6 +58,15 @@ Everything runs out of `web/`. From there:
    project and applying migrations.
 3. `pnpm dev` and open http://localhost:3000
 
+### Test login
+
+A persistent `owner`-role account on the "rev" Supabase project, for manual
+testing without signing up a new one each time:
+
+- Email: `test@rev.dev`
+- Password: `RevTest123!`
+- Restaurant: `test-kitchen` (lands on `/test-kitchen/floor` after login)
+
 ## Useful commands
 
 From `web/`:

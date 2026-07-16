@@ -22,6 +22,13 @@ export function isServerOrAbove(role: StaffRole): boolean {
   return isManagerOrAbove(role) || role === "server";
 }
 
+// Mirrors is_kitchen_or_above() in supabase/migrations/0002_floor_menu_orders.sql
+// — the widest tier: kitchen staff can advance order_items.status without
+// the rest of the server-or-above ticket permissions.
+export function isKitchenOrAbove(role: StaffRole): boolean {
+  return isServerOrAbove(role) || role === "kitchen";
+}
+
 // Wrapped in React's cache() so the tenant-shell layout and every page under
 // it can each call this without re-running auth.getUser() plus two Supabase
 // queries per request — cache() dedupes calls with the same arguments within
