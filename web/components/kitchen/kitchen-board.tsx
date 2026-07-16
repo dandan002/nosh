@@ -4,23 +4,44 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 import type { KitchenItemStatus, KitchenTicketItem } from "@/lib/data/kitchen";
-import { advanceItemStatus } from "@/lib/actions/kitchen";
+import { moveOrderItemStatus } from "@/lib/actions/kitchen";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/icon";
 import { cn } from "@/lib/utils";
 
+type Move = { toStatus: KitchenItemStatus | "cancelled"; label: string };
+
 type Column = {
   status: KitchenItemStatus;
   title: string;
-  nextStatus: KitchenItemStatus | null;
-  actionLabel: string | null;
+  // "Move between stations" forward/back the same kanban stages the board
+  // already tracks (New -> In Kitchen -> Ready) rather than a separate
+  // concept — see PLAN.md. "cancel" is the "unsend" case: pulling a ticket
+  // back before the kitchen has touched it.
+  forward?: Move;
+  backward?: Move;
+  cancel?: Move;
 };
 
 const COLUMNS: Column[] = [
-  { status: "fired", title: "New", nextStatus: "preparing", actionLabel: "Start" },
-  { status: "preparing", title: "In Kitchen", nextStatus: "ready", actionLabel: "Mark Ready" },
-  { status: "ready", title: "Ready", nextStatus: null, actionLabel: null },
+  {
+    status: "fired",
+    title: "New",
+    forward: { toStatus: "preparing", label: "Start" },
+    cancel: { toStatus: "cancelled", label: "Unsend" },
+  },
+  {
+    status: "preparing",
+    title: "In Kitchen",
+    forward: { toStatus: "ready", label: "Mark Ready" },
+    backward: { toStatus: "fired", label: "Undo" },
+  },
+  {
+    status: "ready",
+    title: "Ready",
+    backward: { toStatus: "preparing", label: "Undo" },
+  },
 ];
 
 function timeAgo(iso: string): string {
@@ -57,6 +78,19 @@ function TicketItemRow({
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
+  function move(move: Move) {
+    setError(null);
+    startTransition(async () => {
+      const result = await moveOrderItemStatus(
+        item.id,
+        restaurantSlug,
+        column.status,
+        move.toStatus,
+      );
+      if (result?.error) setError(result.error);
+    });
+  }
+
   return (
     <div className="flex items-start justify-between gap-2 py-2 border-b border-outline-variant last:border-b-0">
       <div className="min-w-0">
@@ -76,25 +110,39 @@ function TicketItemRow({
         {error ? <p className="font-label-caps text-label-caps text-error pl-4">{error}</p> : null}
       </div>
 
-      {canAdvance && column.nextStatus && column.actionLabel ? (
-        <Button
-          size="sm"
-          disabled={pending}
-          onClick={() => {
-            setError(null);
-            startTransition(async () => {
-              const result = await advanceItemStatus(
-                item.id,
-                restaurantSlug,
-                column.status,
-                column.nextStatus!,
-              );
-              if (result?.error) setError(result.error);
-            });
-          }}
-        >
-          {pending ? "..." : column.actionLabel}
-        </Button>
+      {canAdvance ? (
+        <div className="flex items-center gap-1 shrink-0">
+          {column.backward ? (
+            <Button
+              variant="ghost"
+              size="icon"
+              disabled={pending}
+              title={column.backward.label}
+              onClick={() => move(column.backward!)}
+            >
+              <Icon name="undo" className="text-base" />
+            </Button>
+          ) : null}
+          {column.cancel ? (
+            <Button
+              variant="ghost"
+              size="icon"
+              disabled={pending}
+              title={column.cancel.label}
+              onClick={() => {
+                if (!window.confirm(`Unsend ${item.quantity}× ${item.menuItemName}?`)) return;
+                move(column.cancel!);
+              }}
+            >
+              <Icon name="close" className="text-base text-error" />
+            </Button>
+          ) : null}
+          {column.forward ? (
+            <Button size="sm" disabled={pending} onClick={() => move(column.forward!)}>
+              {pending ? "..." : column.forward.label}
+            </Button>
+          ) : null}
+        </div>
       ) : null}
     </div>
   );

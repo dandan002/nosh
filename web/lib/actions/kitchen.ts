@@ -3,22 +3,30 @@
 import { revalidatePath } from "next/cache";
 
 import { createClient } from "@/lib/supabase/server";
-import { AdvanceItemStatusSchema } from "@/lib/validations/kitchen";
+import { MoveItemStatusSchema } from "@/lib/validations/kitchen";
 
 export type KitchenActionState = { error?: string } | undefined;
 
-// RLS (is_kitchen_or_above) is the real enforcement, same convention as the
-// other lib/actions/*.ts files. The .eq("status", fromStatus) below is an
-// optimistic-concurrency guard, not a security check: it stops a
-// double-tap (or two kitchen staff tapping the same ticket) from advancing
-// the same item twice in a row.
-export async function advanceItemStatus(
+// RLS (is_kitchen_or_above, which already includes the server tier) is the
+// real enforcement, same convention as the other lib/actions/*.ts files —
+// kitchen and server staff get the same set of moves. The
+// .eq("status", fromStatus) below is an optimistic-concurrency guard, not a
+// security check: it stops a double-tap (or two staff acting on the same
+// ticket) from moving the same item twice off of a status that already
+// changed underneath them.
+//
+// extraRevalidatePath lets a caller outside /kitchen (namely the order
+// entry ticket, which shows the same fired items read-only) revalidate its
+// own route too — the kitchen board itself doesn't need this since it's
+// wired to Supabase Realtime directly.
+export async function moveOrderItemStatus(
   orderItemId: string,
   restaurantSlug: string,
   fromStatus: string,
   toStatus: string,
+  extraRevalidatePath?: string,
 ): Promise<KitchenActionState> {
-  const validated = AdvanceItemStatusSchema.safeParse({ fromStatus, toStatus });
+  const validated = MoveItemStatusSchema.safeParse({ fromStatus, toStatus });
 
   if (!validated.success) {
     return { error: validated.error.issues[0]?.message ?? "Invalid status transition." };
@@ -40,4 +48,7 @@ export async function advanceItemStatus(
   }
 
   revalidatePath(`/${restaurantSlug}/kitchen`);
+  if (extraRevalidatePath) {
+    revalidatePath(extraRevalidatePath);
+  }
 }

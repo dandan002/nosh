@@ -180,6 +180,8 @@ export function OrderEntryWorkspace({
       <Ticket
         draftLines={draftLines}
         firedOrders={session.orders}
+        restaurantSlug={restaurantSlug}
+        sessionPath={`/${restaurantSlug}/orders/${session.id}`}
         onIncrement={incrementLine}
         onDecrement={decrementLine}
         onRemove={removeLine}
