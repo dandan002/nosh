@@ -51,8 +51,18 @@ Key decisions:
 - Accepted risk (not fixed): `restaurant_id` is denormalized onto every table with nothing (no composite FK, no trigger) verifying a child row's `restaurant_id` matches its parent's. Same tradeoff already made for `staff_members` in 0001 — documented in a comment at the top of `0002_floor_menu_orders.sql`; revisit with composite FKs or a validating trigger if it ever proves insufficient.
 - All fixes applied live via the Supabase MCP and folded back into `supabase/migrations/0002_floor_menu_orders.sql` so a fresh `db push` reproduces the same, correct state.
 
+**Done (floor plan visualization, 2026-07-16):**
+- [x] `app/[restaurantSlug]/floor/page.tsx` — read-only floor plan view, replacing the placeholder. Server Component; `lib/data/floor.ts` fetches `floor_sections` with nested `tables` from Supabase; section switcher via `?section=<id>` search param; status legend (available/occupied/reserved/dirty) with live counts; tables rendered absolutely-positioned via `pos_x`/`pos_y`, styled by shape (round/square/rectangle) and status, matching the `seating-manager` Stitch mockup. Empty states for "no floor plan yet" and "no tables in this section yet."
+- [x] `lib/floor-plan-styles.ts` — status/shape → Tailwind class maps, factored out of the page so the upcoming admin editor and order-entry table picker can reuse the same vocabulary instead of copy-pasting it.
+- [x] **Live-verified** against the real Supabase project: created a test restaurant via the actual signup → onboarding flow, inserted floor plan data via the Supabase MCP, confirmed rendering (multi-section switching, all 4 status styles, empty states) via Playwright screenshots. Test data cleaned up afterward.
+
+**Fixes found via code review (2026-07-16):**
+- `getFloorPlan` discarded the Supabase query error and silently rendered "no floor plan" on any failure (RLS bug, transient error), unlike `lib/data/restaurant.ts`'s pattern of surfacing failures. Now throws on error.
+- `getRestaurantForSlug` was called once in `[restaurantSlug]/layout.tsx` and again in `floor/page.tsx`, doubling auth + Supabase round-trips per request. Wrapped in React's `cache()` to dedupe within a render pass.
+- `.floorplan-bg`'s grid lines used `--color-outline-variant` (#c2c8c2) instead of the mockup's actual #e4e2dd (`--color-surface-variant`) — visibly darker than spec. Fixed the token.
+- All fixes verified against a fresh `pnpm lint && pnpm typecheck && pnpm test && pnpm build`, plus a second live Playwright pass confirming the corrected grid color.
+
 **Not started:**
-- [ ] Floor plan visualization (read-only) — tables via `pos_x`/`pos_y`, colored by status
 - [ ] Floor plan admin editor — add/move tables, assign sections
 - [ ] Menu management — categories, items, modifier groups CRUD
 - [ ] Order entry — pick table/session, browse menu, add items + modifiers, "send to kitchen"
@@ -82,14 +92,15 @@ nosh/                          (repo root; product name is "rev", folder name un
     app/
       (auth pages: login/, signup/, auth/confirm, auth/auth-code-error)
       onboarding/restaurant/
-      [restaurantSlug]/         (layout.tsx = tenant shell; floor/ = placeholder)
+      [restaurantSlug]/         (layout.tsx = tenant shell; floor/ = read-only visualization)
       page.tsx                  (redirects to last restaurant or onboarding)
     components/{ui,auth,nav}/
     lib/
       supabase/{client,server}.ts
       actions/{auth,onboarding}.ts
       validations/{auth,onboarding}.ts
-      data/restaurant.ts
+      data/{restaurant,floor}.ts
+      floor-plan-styles.ts
       slug.ts (+ slug.test.ts)
     proxy.ts
     supabase/
@@ -102,12 +113,13 @@ nosh/                          (repo root; product name is "rev", folder name un
 ## Next Steps (suggested order)
 
 1. ~~Migrations for the remaining Phase A tables~~ — done, `0002_floor_menu_orders.sql`.
-2. Floor plan visualization + admin editor (`app/[restaurantSlug]/floor`), replacing the current placeholder.
-3. Menu management CRUD.
-4. Order entry screen.
-5. Kitchen display + Supabase Realtime wiring.
-6. Delivery/completion tracking to close the Phase A loop.
-7. Seed script + Playwright smoke test once the loop is end-to-end.
+2. ~~Floor plan visualization (read-only)~~ — done, `app/[restaurantSlug]/floor`.
+3. Floor plan admin editor (add/move tables, assign sections) — deferred; the read-only page's absolute-positioning render logic is reusable as the foundation.
+4. Menu management CRUD.
+5. Order entry screen.
+6. Kitchen display + Supabase Realtime wiring.
+7. Delivery/completion tracking to close the Phase A loop.
+8. Seed script + Playwright smoke test once the loop is end-to-end.
 
 ## Verification
 

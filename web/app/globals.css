@@ -262,3 +262,12 @@ body {
 .ambient-shadow {
   box-shadow: 0 20px 40px -10px rgba(23, 49, 36, 0.08);
 }
+
+/* Grid backdrop for the floor plan canvas (from stitch mockups) */
+.floorplan-bg {
+  background-image:
+    linear-gradient(to right, var(--color-surface-variant) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-surface-variant) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-color: var(--color-surface-container);
+}

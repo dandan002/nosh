@@ -1,12 +1,17 @@
 import "server-only";
 
+import { cache } from "react";
 import { notFound, redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
 
 export type StaffRole = "owner" | "admin" | "manager" | "server" | "kitchen";
 
-export async function getRestaurantForSlug(slug: string) {
+// Wrapped in React's cache() so the tenant-shell layout and every page under
+// it can each call this without re-running auth.getUser() plus two Supabase
+// queries per request — cache() dedupes calls with the same arguments within
+// a single render pass.
+export const getRestaurantForSlug = cache(async (slug: string) => {
   const supabase = await createClient();
 
   const {
@@ -49,4 +54,4 @@ export async function getRestaurantForSlug(slug: string) {
       display_name: string;
     },
   };
-}
+});
