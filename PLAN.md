@@ -62,8 +62,20 @@ Key decisions:
 - `.floorplan-bg`'s grid lines used `--color-outline-variant` (#c2c8c2) instead of the mockup's actual #e4e2dd (`--color-surface-variant`) — visibly darker than spec. Fixed the token.
 - All fixes verified against a fresh `pnpm lint && pnpm typecheck && pnpm test && pnpm build`, plus a second live Playwright pass confirming the corrected grid color.
 
+**Done (floor plan admin editor, 2026-07-16):**
+- [x] `components/floor/{floor-workspace,add-table-form,section-manager}.tsx` — manager-only "Edit Layout" mode on the floor page: add/rename/delete floor sections, add/delete tables, drag tables to reposition (plain pointer events, no drag library). `lib/actions/floor.ts` — Server Actions for all six mutations; `lib/validations/floor.ts` — Zod schemas. Gated by `isManagerOrAbove()` (new helper in `lib/data/restaurant.ts`, mirrors the SQL `is_manager_or_above()` role tier) — non-managers see the existing read-only view with no edit affordances.
+- [x] **Live-verified** against the real Supabase project: logged in as an owner, added/renamed/dragged/deleted sections and tables through the actual UI, confirmed persistence via direct DB queries; logged in as a `server`-role account and confirmed edit controls are correctly hidden.
+
+**Fixes found via code review (2026-07-16):**
+- Dragging a table set a local `dragOverrides` position that was never cleared after the drag finished, so a dragged table's on-screen position permanently ignored the server's actual data (including masking a failed save). Now cleared unconditionally in `handleDragEnd`, regardless of outcome.
+- `updateTablePosition`/`deleteTable`/`deleteFloorSection`/`renameFloorSection` only checked for a Postgres *error*, but an RLS-blocked UPDATE/DELETE doesn't error — it just matches zero rows. All four now `.select()` the affected row and treat zero rows as an explicit "not found or not permitted" error.
+- `deleteTable`/`deleteFloorSection` returned `{error}` but no caller read it — failures were silently swallowed. Both components now surface the error (a dismissible banner in the workspace, inline text in the section list).
+- The rename-section form closed back to read-view immediately on submit regardless of success/failure, so a validation/RLS error was never visible. Now watches the `pending` true→false transition and only closes on success.
+- `MANAGER_ROLES` was an inline array literal in `page.tsx` duplicating the SQL role tier; menu management (next up) would have likely reimplemented it. Factored into `isManagerOrAbove()` in `lib/data/restaurant.ts`.
+- Adding two tables without closing the form stacked them at the same client-computed position. Position is now computed server-side in `createTable` from the current table count, so sequential adds land at different spots.
+- All fixes verified with `pnpm lint/typecheck/test/build` plus a live Playwright pass: confirmed rapid-add no longer overlaps (checked via DB), confirmed a whitespace-only rename is rejected server-side and the form stays open (checked the name was unchanged in the DB).
+
 **Not started:**
-- [ ] Floor plan admin editor — add/move tables, assign sections
 - [ ] Menu management — categories, items, modifier groups CRUD
 - [ ] Order entry — pick table/session, browse menu, add items + modifiers, "send to kitchen"
 - [ ] Kitchen display — realtime tickets grouped by order/table, tap to advance status
@@ -92,13 +104,13 @@ nosh/                          (repo root; product name is "rev", folder name un
     app/
       (auth pages: login/, signup/, auth/confirm, auth/auth-code-error)
       onboarding/restaurant/
-      [restaurantSlug]/         (layout.tsx = tenant shell; floor/ = read-only visualization)
+      [restaurantSlug]/         (layout.tsx = tenant shell; floor/ = visualization + admin editor)
       page.tsx                  (redirects to last restaurant or onboarding)
-    components/{ui,auth,nav}/
+    components/{ui,auth,nav,floor}/
     lib/
       supabase/{client,server}.ts
-      actions/{auth,onboarding}.ts
-      validations/{auth,onboarding}.ts
+      actions/{auth,onboarding,floor}.ts
+      validations/{auth,onboarding,floor}.ts
       data/{restaurant,floor}.ts
       floor-plan-styles.ts
       slug.ts (+ slug.test.ts)
@@ -114,7 +126,7 @@ nosh/                          (repo root; product name is "rev", folder name un
 
 1. ~~Migrations for the remaining Phase A tables~~ — done, `0002_floor_menu_orders.sql`.
 2. ~~Floor plan visualization (read-only)~~ — done, `app/[restaurantSlug]/floor`.
-3. Floor plan admin editor (add/move tables, assign sections) — deferred; the read-only page's absolute-positioning render logic is reusable as the foundation.
+3. ~~Floor plan admin editor~~ — done, `components/floor/`.
 4. Menu management CRUD.
 5. Order entry screen.
 6. Kitchen display + Supabase Realtime wiring.
