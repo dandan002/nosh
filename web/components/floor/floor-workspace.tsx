@@ -63,6 +63,11 @@ function TableMarker({
           type="button"
           disabled={isDeleting}
           className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-error text-on-error flex items-center justify-center opacity-0 group-hover/table:opacity-100 transition-opacity shadow-sm"
+          // Stop the pointerdown here from bubbling to the marker div's own
+          // onPointerDown (drag start) — without this, pressing the button
+          // also captures the pointer for a drag, which can swallow the
+          // click event entirely so the delete never fires.
+          onPointerDown={(e) => e.stopPropagation()}
           onClick={() => {
             if (!window.confirm(`Delete table "${table.label}"?`)) return;
             startTransition(async () => {
