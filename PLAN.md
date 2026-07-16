@@ -75,6 +75,8 @@ Key decisions:
 - Adding two tables without closing the form stacked them at the same client-computed position. Position is now computed server-side in `createTable` from the current table count, so sequential adds land at different spots.
 - All fixes verified with `pnpm lint/typecheck/test/build` plus a live Playwright pass: confirmed rapid-add no longer overlaps (checked via DB), confirmed a whitespace-only rename is rejected server-side and the form stays open (checked the name was unchanged in the DB).
 
+**Bug fix (user-reported, 2026-07-16):** Table delete ("x" button) silently did nothing. Root cause: the button sits inside the table marker's draggable `div`; pressing it bubbled a `pointerdown` up to the drag handler, which called `setPointerCapture` on the marker and redirected the browser's click-event targeting, so the button's `onClick` (the actual delete) often never fired. Fixed with `onPointerDown={(e) => e.stopPropagation()}` on the button. Live-verified: reproduced the confirm dialog firing, deleted a table through the real UI, confirmed via direct DB query it was gone.
+
 **Not started:**
 - [ ] Menu management — categories, items, modifier groups CRUD
 - [ ] Order entry — pick table/session, browse menu, add items + modifiers, "send to kitchen"
@@ -116,7 +118,7 @@ nosh/                          (repo root; product name is "rev", folder name un
       slug.ts (+ slug.test.ts)
     proxy.ts
     supabase/
-      migrations/0001_init.sql
+      migrations/{0001_init,0002_floor_menu_orders}.sql
       README.md
     stitch-export/                (Stitch mockups — design reference, already landed)
     vitest.config.ts
