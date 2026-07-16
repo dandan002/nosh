@@ -41,6 +41,16 @@ Key decisions:
 - Redundant overlapping SELECT policy on `staff_members` (perf advisor). Split the old `for all` "owners and admins" policy into separate INSERT/UPDATE/DELETE policies so it no longer duplicates the SELECT already granted by the membership policy.
 - All three fixes applied live via the Supabase MCP and folded back into `supabase/migrations/0001_init.sql` so a fresh `db push` reproduces the same, correct state.
 
+**Done (schema, 2026-07-16):**
+- [x] `supabase/migrations/0002_floor_menu_orders.sql` — `floor_sections`, `tables`, `table_sessions`, `menu_categories`, `menu_items`, `modifier_groups`, `modifiers`, `orders`, `order_items`, `order_item_modifiers`, all with `restaurant_id` + RLS (members read; owner/admin/manager write floor plan & menu; owner/admin/manager/server write sessions/orders; kitchen role can additionally advance `order_items.status`). Applied live to the "rev" Supabase project and verified clean against `get_advisors` (no new WARNs; the only remaining security/performance WARNs are the pre-existing ones already accepted in 0001).
+
+**Fixes found via code review (2026-07-16):**
+- `table_sessions` had no constraint stopping two concurrent "seat this table" writes from both creating an `active` session for the same table. Fixed with a partial unique index, `table_sessions_one_active_per_table_idx` on `(table_id) where status = 'active'`, replacing the old plain index.
+- `modifiers` had no soft-delete flag, but `order_item_modifiers.modifier_id` uses `on delete restrict` — once a modifier had ever been ordered it could never be removed. Added `modifiers.active`, mirroring `menu_items.active`.
+- The `staff_role_for(restaurant_id) in (...)` role-tier check was hand-copied ~40 times across the write policies. Factored into `is_manager_or_above()` / `is_server_or_above()` / `is_kitchen_or_above()` helper functions (same convention as `is_restaurant_member`/`staff_role_for` from 0001) so a role-tier change only needs to happen in one place.
+- Accepted risk (not fixed): `restaurant_id` is denormalized onto every table with nothing (no composite FK, no trigger) verifying a child row's `restaurant_id` matches its parent's. Same tradeoff already made for `staff_members` in 0001 — documented in a comment at the top of `0002_floor_menu_orders.sql`; revisit with composite FKs or a validating trigger if it ever proves insufficient.
+- All fixes applied live via the Supabase MCP and folded back into `supabase/migrations/0002_floor_menu_orders.sql` so a fresh `db push` reproduces the same, correct state.
+
 **Not started:**
 - [ ] Floor plan visualization (read-only) — tables via `pos_x`/`pos_y`, colored by status
 - [ ] Floor plan admin editor — add/move tables, assign sections
@@ -50,7 +60,6 @@ Key decisions:
 - [ ] Delivery/completion tracking — server sees "ready" items live, marks delivered
 - [ ] Realtime wiring (Supabase Realtime on `order_items`/`tables`/`table_sessions`)
 - [ ] Responsive/tablet polish pass
-- [ ] Migrations for `floor_sections`, `tables`, `table_sessions`, `menu_categories`, `menu_items`, `modifier_groups`, `modifiers`, `orders`, `order_items`, `order_item_modifiers` (schema designed in the original plan, not yet migrated)
 - [ ] Demo-restaurant seed script
 - [ ] Playwright E2E smoke test (seat table → order → kitchen → deliver)
 
@@ -92,7 +101,7 @@ nosh/                          (repo root; product name is "rev", folder name un
 
 ## Next Steps (suggested order)
 
-1. Migrations for the remaining Phase A tables (floor plan, menu, orders) — designed already in the original plan's data model, just not yet written as SQL.
+1. ~~Migrations for the remaining Phase A tables~~ — done, `0002_floor_menu_orders.sql`.
 2. Floor plan visualization + admin editor (`app/[restaurantSlug]/floor`), replacing the current placeholder.
 3. Menu management CRUD.
 4. Order entry screen.
