@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# rev — web
 
-## Getting Started
+Restaurant/cafe management platform: seating, order entry, kitchen display,
+and (Phase B) billing. This is the web app; native iOS/Android clients are a
+later phase (see `../ios` and `../android`).
 
-First, run the development server:
+## Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Next.js (App Router) + TypeScript, Tailwind v4, hand-rolled shadcn/ui-style
+components in `components/ui/`, Supabase (Postgres + Auth + Realtime), Zod +
+React Hook Form. Deployed on Vercel.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Setup
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. `pnpm install`
+2. Copy `.env.example` to `.env.local` and fill in your Supabase project's
+   URL / publishable key (Project Settings → API in the Supabase dashboard).
+   See `supabase/README.md` for creating the project and applying migrations.
+3. `pnpm dev` and open http://localhost:3000
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Design reference
 
-## Learn More
+`stitch-export/` contains the Stitch-generated screen mockups this app is
+built against (design system: "Vancouver Modern", light theme). The tokens in
+`app/globals.css` are extracted verbatim from those exports — that file is
+the intended place to update if the visual design changes.
 
-To learn more about Next.js, take a look at the following resources:
+## Structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `app/` — routes. `[restaurantSlug]/` is the authenticated, tenant-scoped
+  area (floor plan, orders, kitchen, billing, admin).
+- `components/ui/` — base primitives (Button, Input, Card, Label).
+- `lib/supabase/` — `@supabase/ssr` client/server wiring.
+- `lib/actions/` — Server Actions (auth, onboarding).
+- `lib/validations/` — Zod schemas shared by forms and Server Actions.
+- `supabase/migrations/` — schema, source of truth (never hand-edit via the
+  Supabase dashboard).
+- `proxy.ts` — Next.js 16's replacement for `middleware.ts`; refreshes the
+  Supabase session and gates unauthenticated access.

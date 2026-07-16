@@ -1,26 +1,264 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
+/*
+ * Design tokens extracted verbatim from the stitch-export screen exports
+ * (Stitch design system: "Vancouver Modern", light theme).
+ * This block is the intended swap point if the visual design changes later.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-on-surface-variant: #424844;
+  --color-outline: #727973;
+  --color-surface-container-low: #f5f3ee;
+  --color-secondary-fixed: #ffdcbd;
+  --color-surface-bright: #fbf9f4;
+  --color-surface-tint: #496455;
+  --color-on-tertiary-container: #a1afbf;
+  --color-secondary-fixed-dim: #eebd8e;
+  --color-error-container: #ffdad6;
+  --color-on-tertiary-fixed-variant: #3a4855;
+  --color-on-secondary: #ffffff;
+  --color-surface-variant: #e4e2dd;
+  --color-surface-container-lowest: #ffffff;
+  --color-on-primary-fixed: #062014;
+  --color-surface-container: #f0eee9;
+  --color-on-background: #1b1c19;
+  --color-primary: #173124;
+  --color-primary-fixed-dim: #b0cdbb;
+  --color-inverse-primary: #b0cdbb;
+  --color-on-tertiary-fixed: #0f1d28;
+  --color-outline-variant: #c2c8c2;
+  --color-on-secondary-container: #79542d;
+  --color-surface-container-high: #eae8e3;
+  --color-error: #ba1a1a;
+  --color-secondary-container: #fdcb9b;
+  --color-secondary: #7c5730;
+  --color-on-tertiary: #ffffff;
+  --color-primary-container: #2d4739;
+  --color-tertiary-container: #354350;
+  --color-on-secondary-fixed-variant: #61401b;
+  --color-background: #fbf9f4;
+  --color-on-primary-fixed-variant: #324c3e;
+  --color-surface: #fbf9f4;
+  --color-surface-container-highest: #e4e2dd;
+  --color-on-surface: #1b1c19;
+  --color-tertiary: #1f2d39;
+  --color-surface-dim: #dbdad5;
+  --color-on-secondary-fixed: #2c1600;
+  --color-on-primary: #ffffff;
+  --color-inverse-on-surface: #f2f1ec;
+  --color-primary-fixed: #ccead6;
+  --color-tertiary-fixed-dim: #b9c8d8;
+  --color-on-primary-container: #98b5a3;
+  --color-inverse-surface: #30312e;
+  --color-on-error-container: #93000a;
+  --color-on-error: #ffffff;
+  --color-tertiary-fixed: #d5e4f4;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-on-surface-variant: var(--color-on-surface-variant);
+  --color-outline: var(--color-outline);
+  --color-surface-container-low: var(--color-surface-container-low);
+  --color-secondary-fixed: var(--color-secondary-fixed);
+  --color-surface-bright: var(--color-surface-bright);
+  --color-surface-tint: var(--color-surface-tint);
+  --color-on-tertiary-container: var(--color-on-tertiary-container);
+  --color-secondary-fixed-dim: var(--color-secondary-fixed-dim);
+  --color-error-container: var(--color-error-container);
+  --color-on-tertiary-fixed-variant: var(--color-on-tertiary-fixed-variant);
+  --color-on-secondary: var(--color-on-secondary);
+  --color-surface-variant: var(--color-surface-variant);
+  --color-surface-container-lowest: var(--color-surface-container-lowest);
+  --color-on-primary-fixed: var(--color-on-primary-fixed);
+  --color-surface-container: var(--color-surface-container);
+  --color-on-background: var(--color-on-background);
+  --color-primary: var(--color-primary);
+  --color-primary-fixed-dim: var(--color-primary-fixed-dim);
+  --color-inverse-primary: var(--color-inverse-primary);
+  --color-on-tertiary-fixed: var(--color-on-tertiary-fixed);
+  --color-outline-variant: var(--color-outline-variant);
+  --color-on-secondary-container: var(--color-on-secondary-container);
+  --color-surface-container-high: var(--color-surface-container-high);
+  --color-error: var(--color-error);
+  --color-secondary-container: var(--color-secondary-container);
+  --color-secondary: var(--color-secondary);
+  --color-on-tertiary: var(--color-on-tertiary);
+  --color-primary-container: var(--color-primary-container);
+  --color-tertiary-container: var(--color-tertiary-container);
+  --color-on-secondary-fixed-variant: var(--color-on-secondary-fixed-variant);
+  --color-background: var(--color-background);
+  --color-on-primary-fixed-variant: var(--color-on-primary-fixed-variant);
+  --color-surface: var(--color-surface);
+  --color-surface-container-highest: var(--color-surface-container-highest);
+  --color-on-surface: var(--color-on-surface);
+  --color-tertiary: var(--color-tertiary);
+  --color-surface-dim: var(--color-surface-dim);
+  --color-on-secondary-fixed: var(--color-on-secondary-fixed);
+  --color-on-primary: var(--color-on-primary);
+  --color-inverse-on-surface: var(--color-inverse-on-surface);
+  --color-primary-fixed: var(--color-primary-fixed);
+  --color-tertiary-fixed-dim: var(--color-tertiary-fixed-dim);
+  --color-on-primary-container: var(--color-on-primary-container);
+  --color-inverse-surface: var(--color-inverse-surface);
+  --color-on-error-container: var(--color-on-error-container);
+  --color-on-error: var(--color-on-error);
+  --color-tertiary-fixed: var(--color-tertiary-fixed);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* shadcn-style aliases so hand-rolled ui/ primitives use semantic names */
+  --color-border: var(--color-outline-variant);
+  --color-input: var(--color-outline-variant);
+  --color-ring: var(--color-primary);
+  --color-card: var(--color-surface);
+  --color-card-foreground: var(--color-on-surface);
+  --color-destructive: var(--color-error);
+  --color-destructive-foreground: var(--color-on-error);
+  --color-muted: var(--color-surface-container);
+  --color-muted-foreground: var(--color-on-surface-variant);
+  --color-accent: var(--color-secondary-container);
+  --color-accent-foreground: var(--color-on-secondary-container);
+
+  /* radius, per tailwind.config in stitch-export (borderRadius) */
+  --radius-DEFAULT: 0.25rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-full: 9999px;
+
+  /*
+   * spacing extras, per tailwind.config in stitch-export (spacing).
+   * Note: xs/sm/md/lg/xl are deliberately NOT defined here (4/8/16/24/32px) —
+   * Tailwind's default numeric spacing scale already covers them
+   * (spacing-1/2/4/6/8) and reusing those short names as --spacing-* keys
+   * would collide with Tailwind's built-in size scale shared by max-w-*,
+   * text-*, rounded-*, etc.
+   */
+  --spacing-unit: 8px;
+  --spacing-gutter: 24px;
+  --spacing-margin-mobile: 16px;
+  --spacing-margin-desktop: 40px;
+  --spacing-page-max-width: 1440px;
+
+  /* fontFamily, per tailwind.config in stitch-export (all Geist) */
+  --font-headline-lg: var(--font-geist-sans);
+  --font-headline-lg-mobile: var(--font-geist-sans);
+  --font-headline-md: var(--font-geist-sans);
+  --font-headline-sm: var(--font-geist-sans);
+  --font-display-lg: var(--font-geist-sans);
+  --font-body-lg: var(--font-geist-sans);
+  --font-body-md: var(--font-geist-sans);
+  --font-body-sm: var(--font-geist-sans);
+  --font-label-lg: var(--font-geist-sans);
+  --font-label-md: var(--font-geist-sans);
+  --font-label-caps: var(--font-geist-sans);
+  --font-mono-sm: var(--font-geist-mono);
+
+  /* fontSize, per tailwind.config in stitch-export (fontSize) */
+  --text-display-lg: 48px;
+  --text-display-lg--line-height: 56px;
+  --text-display-lg--letter-spacing: -0.02em;
+  --text-display-lg--font-weight: 700;
+
+  --text-headline-lg: 48px;
+  --text-headline-lg--line-height: 1.1;
+  --text-headline-lg--letter-spacing: -0.02em;
+  --text-headline-lg--font-weight: 600;
+
+  --text-headline-lg-mobile: 32px;
+  --text-headline-lg-mobile--line-height: 1.2;
+  --text-headline-lg-mobile--letter-spacing: -0.01em;
+  --text-headline-lg-mobile--font-weight: 600;
+
+  --text-headline-md: 24px;
+  --text-headline-md--line-height: 1.3;
+  --text-headline-md--letter-spacing: 0.01em;
+  --text-headline-md--font-weight: 500;
+
+  --text-headline-sm: 20px;
+  --text-headline-sm--line-height: 28px;
+  --text-headline-sm--font-weight: 600;
+
+  --text-body-lg: 18px;
+  --text-body-lg--line-height: 1.6;
+  --text-body-lg--letter-spacing: 0.01em;
+  --text-body-lg--font-weight: 400;
+
+  --text-body-md: 16px;
+  --text-body-md--line-height: 1.5;
+  --text-body-md--letter-spacing: 0.02em;
+  --text-body-md--font-weight: 400;
+
+  --text-body-sm: 14px;
+  --text-body-sm--line-height: 20px;
+  --text-body-sm--font-weight: 400;
+
+  --text-label-lg: 14px;
+  --text-label-lg--line-height: 20px;
+  --text-label-lg--letter-spacing: 0.05em;
+  --text-label-lg--font-weight: 600;
+
+  --text-label-md: 12px;
+  --text-label-md--line-height: 16px;
+  --text-label-md--letter-spacing: 0.05em;
+  --text-label-md--font-weight: 600;
+
+  --text-label-caps: 12px;
+  --text-label-caps--line-height: 1;
+  --text-label-caps--letter-spacing: 0.1em;
+  --text-label-caps--font-weight: 600;
+
+  --text-mono-sm: 14px;
+  --text-mono-sm--line-height: 20px;
+  --text-mono-sm--font-weight: 500;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-background);
+  color: var(--color-on-background);
+}
+
+.material-symbols-outlined {
+  font-family: "Material Symbols Outlined";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
+  font-variation-settings: "FILL" 0;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-outline-variant);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-outline);
+}
+
+/* Modern Industrial inner shadow effect for pressed states (from stitch mockups) */
+.industrial-pressed:active {
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  transform: translateY(1px);
+}
+
+.input-focus-ring:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: 0 1px 0 0 var(--color-primary);
+}
+
+.ambient-shadow {
+  box-shadow: 0 20px 40px -10px rgba(23, 49, 36, 0.08);
 }
