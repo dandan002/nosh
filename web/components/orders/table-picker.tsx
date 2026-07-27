@@ -5,6 +5,7 @@ import Link from "next/link";
 
 import type { OrderableFloorSection } from "@/lib/data/orders";
 import { seatTable } from "@/lib/actions/orders";
+import { useRealtimeRefresh } from "@/lib/hooks/use-realtime-refresh";
 import { STATUS_LABEL, STATUS_SWATCH } from "@/lib/floor-plan-styles";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -78,6 +79,8 @@ export function TablePicker({
   canSeat: boolean;
 }) {
   const [seatingTableId, setSeatingTableId] = useState<string | null>(null);
+
+  useRealtimeRefresh(`orders-picker-${restaurantId}`, restaurantId, ["tables", "table_sessions"]);
 
   if (sections.length === 0) {
     return (

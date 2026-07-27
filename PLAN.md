@@ -102,8 +102,14 @@ Key decisions:
 - [x] Order entry ticket (`components/orders/ticket.tsx`): a fired-but-unstarted item now shows an "Unsend" control (with a confirm dialog) instead of its read-only status badge — this is the server-side half of "unsend," letting a server pull back a ticket before the kitchen has touched it. Cancelled items render struck-through/dimmed and are excluded from the ticket's subtotal.
 - [x] **Live-verified** against the real Supabase project: from the kitchen board, moved a `ready` item back to `preparing` via "Undo" and confirmed the DB row updated; from the order-entry screen, fired a fresh item, clicked "Unsend," confirmed the browser confirm dialog, and confirmed the item flipped to `cancelled` in the DB, disappeared from the kitchen board entirely, and the order-entry subtotal dropped by the unsent item's price. `get_advisors` showed no new WARNs.
 
+**Done (realtime on tables/table_sessions, 2026-07-27, [#3](https://github.com/dandan002/nosh/issues/3)):**
+- [x] `lib/hooks/use-realtime-refresh.ts` — extracted the subscribe-then-`router.refresh()` pattern out of `kitchen-board.tsx` into a shared hook (`useRealtimeRefresh(channelName, restaurantId, tables)`), including the auth-timing fix from the kitchen display phase (awaiting `supabase.auth.getSession()` and calling `supabase.realtime.setAuth()` before subscribing). Centralizing it means the next realtime consumer doesn't have to rediscover that bug. `kitchen-board.tsx` now calls the shared hook instead of inlining its own subscription.
+- [x] `supabase/migrations/0004_floor_orders_realtime.sql` — adds `tables` and `table_sessions` to the `supabase_realtime` publication (`order_items` landed with 0003).
+- [x] Wired into three consumers: `components/floor/floor-workspace.tsx` (`tables`, for live status/position on the floor plan), `components/orders/table-picker.tsx` (`tables` + `table_sessions`, so the "Occupied"/"Available" badge and "View Order" link update live as other staff seat tables), and `components/orders/order-entry-workspace.tsx` (`order_items`, so a server sees "Preparing"/"Ready" on their ticket live as the kitchen works it — filtered by `restaurant_id` only, same tradeoff the kitchen board already makes, since `order_items` doesn't carry a session id directly).
+- [x] **Live-verified** against the real Supabase project (`test-kitchen`): flipped a table's status via direct SQL from a separate connection and watched the open floor-plan tab update its status counts and table label with no reload; inserted a `table_sessions` row directly and watched the open orders table-picker tab flip that table to "Occupied" with a live "View Order" link; updated an `order_items` row and watched the open order-entry ticket flip from "Preparing" to "Ready." `get_advisors` showed no new WARNs (a batch of `unused_index` INFO lints appeared because the project's stats had just reset after an unrelated pause/restore — not a regression).
+- [x] Note: the "rev" Supabase project auto-paused from inactivity mid-session (free-tier behavior) and had to be restored before any of the above could be verified — not a code issue, just something to expect if the project sits idle for a while.
+
 **Not started** (tracked as GitHub issues, milestone [Phase A — core service loop](https://github.com/dandan002/nosh/milestone/1)):
-- [ ] Wire Supabase Realtime on `tables`/`table_sessions` (kitchen's slice of realtime — `order_items` — landed with the kitchen display above; this is the rest: floor plan / table picker going live) ([#3](https://github.com/dandan002/nosh/issues/3))
 - [ ] Delivery/completion tracking — server sees "ready" items live, marks delivered ([#4](https://github.com/dandan002/nosh/issues/4))
 - [ ] Responsive/tablet polish pass ([#5](https://github.com/dandan002/nosh/issues/5))
 - [ ] Demo-restaurant seed script ([#6](https://github.com/dandan002/nosh/issues/6))
@@ -133,6 +139,7 @@ nosh/                          (repo root; product name is "rev", folder name un
     components/{ui,auth,nav,floor,menu,orders,kitchen}/
     lib/
       supabase/{client,server}.ts
+      hooks/use-realtime-refresh.ts
       actions/{auth,onboarding,floor,menu,orders,kitchen}.ts
       validations/{auth,onboarding,floor,menu,orders,kitchen}.ts
       data/{restaurant,floor,menu,orders,kitchen}.ts
@@ -140,7 +147,7 @@ nosh/                          (repo root; product name is "rev", folder name un
       slug.ts (+ slug.test.ts)
     proxy.ts
     supabase/
-      migrations/{0001_init,0002_floor_menu_orders,0003_kitchen_realtime}.sql
+      migrations/{0001_init,0002_floor_menu_orders,0003_kitchen_realtime,0004_floor_orders_realtime}.sql
       README.md
     stitch-export/                (Stitch mockups — design reference, already landed)
     vitest.config.ts
@@ -153,7 +160,7 @@ nosh/                          (repo root; product name is "rev", folder name un
 3. ~~Floor plan admin editor~~ — done, `components/floor/`.
 4. ~~Menu management CRUD~~ — done, `app/[restaurantSlug]/admin/menu`, `components/menu/`.
 5. ~~Order entry screen~~ — done, `app/[restaurantSlug]/orders`, `components/orders/`.
-6. ~~Kitchen display~~ — done, `app/[restaurantSlug]/kitchen`, `components/kitchen/`, realtime on `order_items` ([#2](https://github.com/dandan002/nosh/issues/2)). Realtime on `tables`/`table_sessions` still open ([#3](https://github.com/dandan002/nosh/issues/3)).
+6. ~~Kitchen display~~ — done, `app/[restaurantSlug]/kitchen`, `components/kitchen/`, realtime on `order_items` ([#2](https://github.com/dandan002/nosh/issues/2)). ~~Realtime on `tables`/`table_sessions`~~ — done, `lib/hooks/use-realtime-refresh.ts` ([#3](https://github.com/dandan002/nosh/issues/3)).
 7. Delivery/completion tracking to close the Phase A loop ([#4](https://github.com/dandan002/nosh/issues/4)).
 8. Seed script + Playwright smoke test once the loop is end-to-end ([#6](https://github.com/dandan002/nosh/issues/6), [#7](https://github.com/dandan002/nosh/issues/7)).
 

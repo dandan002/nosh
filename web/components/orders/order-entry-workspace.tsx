@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 
 import type { OrderableCategory, OrderableItem, SessionDetail } from "@/lib/data/orders";
 import { fireOrder } from "@/lib/actions/orders";
+import { useRealtimeRefresh } from "@/lib/hooks/use-realtime-refresh";
 import { ModifierPicker } from "@/components/orders/modifier-picker";
 import { Ticket, type DraftLine } from "@/components/orders/ticket";
 import { Icon } from "@/components/icon";
@@ -37,6 +38,13 @@ export function OrderEntryWorkspace({
   const [pickerItem, setPickerItem] = useState<OrderableItem | null>(null);
   const [firing, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+
+  // Filtered by restaurant, not by this session's order_items specifically
+  // — postgres_changes only supports a single equality filter, and
+  // order_items doesn't carry a session id directly (it hangs off orders).
+  // Same tradeoff the kitchen board makes; this is what lets a server see a
+  // ticket move to "Preparing"/"Ready" live as the kitchen works it.
+  useRealtimeRefresh(`order-entry-${restaurantId}`, restaurantId, ["order_items"]);
 
   const activeCategory = categories.find((c) => c.id === activeCategoryId) ?? categories[0];
 
