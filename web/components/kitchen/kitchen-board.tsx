@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
 
 import type { KitchenItemStatus, KitchenTicketItem } from "@/lib/data/kitchen";
 import { moveOrderItemStatus } from "@/lib/actions/kitchen";
-import { createClient } from "@/lib/supabase/client";
+import { useRealtimeRefresh } from "@/lib/hooks/use-realtime-refresh";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/icon";
 import { cn } from "@/lib/utils";
@@ -159,56 +158,7 @@ export function KitchenBoard({
   items: KitchenTicketItem[];
   canAdvance: boolean;
 }) {
-  const router = useRouter();
-  const refreshTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    const supabase = createClient();
-    let channel: ReturnType<typeof supabase.channel> | null = null;
-    let cancelled = false;
-
-    // Firing an order inserts several order_items rows at once, and this
-    // component doesn't have the joined table/menu-item data a raw
-    // postgres_changes payload carries — so any relevant change just asks
-    // the server component to re-fetch via router.refresh(), debounced so a
-    // multi-item fire doesn't trigger a burst of refreshes.
-    function scheduleRefresh() {
-      if (refreshTimer.current) clearTimeout(refreshTimer.current);
-      refreshTimer.current = setTimeout(() => router.refresh(), 200);
-    }
-
-    // postgres_changes subscriptions are RLS-checked against the socket's
-    // own auth token, which the realtime client doesn't always have set yet
-    // by the time a channel is created from a fresh page load — subscribing
-    // before that resolves silently connects as anon and never matches
-    // "members can read order items," so no events ever arrive. Awaiting
-    // the session and setting it explicitly avoids that race.
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (cancelled) return;
-      if (session) supabase.realtime.setAuth(session.access_token);
-
-      channel = supabase
-        .channel(`kitchen-${restaurantId}`)
-        .on(
-          "postgres_changes",
-          {
-            event: "*",
-            schema: "public",
-            table: "order_items",
-            filter: `restaurant_id=eq.${restaurantId}`,
-          },
-          scheduleRefresh,
-        )
-        .subscribe();
-    });
-
-    return () => {
-      cancelled = true;
-      if (refreshTimer.current) clearTimeout(refreshTimer.current);
-      if (!channel) return;
-      supabase.removeChannel(channel);
-    };
-  }, [restaurantId, router]);
+  useRealtimeRefresh(`kitchen-${restaurantId}`, restaurantId, ["order_items"]);
 
   return (
     <div className="flex-1 overflow-auto p-6 flex gap-4">

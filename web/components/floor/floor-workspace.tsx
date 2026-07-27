@@ -12,6 +12,7 @@ import {
   STATUS_SWATCH,
 } from "@/lib/floor-plan-styles";
 import { deleteTable, updateTablePosition } from "@/lib/actions/floor";
+import { useRealtimeRefresh } from "@/lib/hooks/use-realtime-refresh";
 import { AddTableForm } from "@/components/floor/add-table-form";
 import { SectionManager } from "@/components/floor/section-manager";
 import { Button } from "@/components/ui/button";
@@ -102,6 +103,8 @@ export function FloorWorkspace({
   );
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
+
+  useRealtimeRefresh(`floor-${restaurantId}`, restaurantId, ["tables"]);
 
   const activeSection =
     sections.find((section) => section.id === activeSectionId) ?? sections[0];
