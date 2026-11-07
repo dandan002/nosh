@@ -32,7 +32,7 @@ export function AddTableForm({
   return (
     <form
       action={formAction}
-      className="flex items-end gap-2 p-3 bg-surface-container-low border border-outline-variant rounded"
+      className="flex flex-wrap items-end gap-2 p-3 bg-surface-container-low border border-outline-variant rounded"
     >
       <div className="w-20">
         <Input name="label" placeholder="T6" required className="text-sm" />

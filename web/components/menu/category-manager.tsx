@@ -67,18 +67,19 @@ function CategoryRow({
   return (
     <div
       className={cn(
-        "flex items-center justify-between gap-2 py-2 px-3 rounded-DEFAULT cursor-pointer group",
+        "flex items-center justify-between gap-2 py-1 px-3 min-h-11 rounded-DEFAULT cursor-pointer group",
         active
           ? "bg-secondary-container text-on-secondary-container font-bold"
           : "text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface",
       )}
       onClick={onSelect}
     >
-      <span className="font-body-md text-body-md">
+      <span className="font-body-md text-body-md min-w-0 truncate">
         {category.name}{" "}
         <span className="opacity-70">({category.items.length})</span>
       </span>
-      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100">
+      {/* Hover-revealed on fine pointers only; touch has no hover. */}
+      <div className="flex items-center gap-1 shrink-0 pointer-fine:opacity-0 pointer-fine:group-hover:opacity-100 focus-within:opacity-100">
         <Button
           variant="ghost"
           size="icon"
@@ -138,7 +139,9 @@ export function CategoryManager({
   );
 
   return (
-    <div className="w-72 bg-surface border-r border-outline-variant flex flex-col shrink-0 p-4 gap-2">
+    // Stacks above the items list below md (height-capped, scrolls); side
+    // column at md+.
+    <div className="w-full md:w-72 max-h-[40%] md:max-h-none overflow-y-auto bg-surface border-b md:border-b-0 md:border-r border-outline-variant flex flex-col shrink-0 p-4 gap-2">
       <h2 className="font-headline-sm text-headline-sm text-on-surface px-1 mb-1">
         Categories
       </h2>

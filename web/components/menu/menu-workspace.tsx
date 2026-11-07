@@ -31,7 +31,7 @@ export function MenuWorkspace({
 
   if (categories.length === 0) {
     return (
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 min-h-0 flex flex-col md:flex-row overflow-hidden">
         {canEdit ? (
           <CategoryManager
             categories={[]}
@@ -42,7 +42,7 @@ export function MenuWorkspace({
             onError={setActionError}
           />
         ) : null}
-        <div className="flex-1 flex flex-col items-center justify-center gap-2 text-on-surface-variant font-body-md text-body-md">
+        <div className="flex-1 flex flex-col items-center justify-center gap-2 p-4 text-on-surface-variant font-body-md text-body-md">
           <p>No menu categories yet.</p>
           {actionError ? (
             <p className="font-label-caps text-label-caps text-error">{actionError}</p>
@@ -53,7 +53,7 @@ export function MenuWorkspace({
   }
 
   return (
-    <div className="flex-1 flex overflow-hidden">
+    <div className="flex-1 min-h-0 flex flex-col md:flex-row overflow-hidden">
       {canEdit ? (
         <CategoryManager
           categories={categories}
@@ -68,9 +68,9 @@ export function MenuWorkspace({
         />
       ) : null}
 
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="h-14 border-b border-outline-variant bg-surface flex items-center justify-between px-6 shrink-0">
-          <h2 className="font-headline-sm text-headline-sm text-on-surface">
+      <div className="flex-1 min-h-0 min-w-0 flex flex-col overflow-hidden">
+        <div className="h-14 border-b border-outline-variant bg-surface flex items-center justify-between gap-2 px-4 md:px-6 shrink-0">
+          <h2 className="font-headline-sm text-headline-sm text-on-surface truncate">
             {activeCategory?.name}
           </h2>
           {canEdit && activeCategory ? (
@@ -81,15 +81,20 @@ export function MenuWorkspace({
         </div>
 
         {actionError ? (
-          <div className="px-6 py-2 border-b border-outline-variant bg-error/10 flex items-center justify-between gap-2">
+          <div className="px-4 md:px-6 py-1 border-b border-outline-variant bg-error/10 flex items-center justify-between gap-2">
             <p className="font-label-caps text-label-caps text-error">{actionError}</p>
-            <button type="button" onClick={() => setActionError(null)} className="text-error">
+            <button
+              type="button"
+              onClick={() => setActionError(null)}
+              aria-label="Dismiss error"
+              className="text-error h-11 w-11 -mr-3 flex items-center justify-center shrink-0"
+            >
               <Icon name="close" className="text-sm" />
             </button>
           </div>
         ) : null}
 
-        <div className="flex-1 overflow-auto p-6 flex flex-col gap-3">
+        <div className="flex-1 overflow-auto p-4 md:p-6 flex flex-col gap-3">
           {showAddItem && activeCategory ? (
             <ItemForm
               restaurantId={restaurantId}

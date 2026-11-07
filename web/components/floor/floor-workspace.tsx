@@ -41,11 +41,18 @@ function TableMarker({
 
   return (
     <div
-      className={cn("absolute group/table", editMode && "cursor-grab active:cursor-grabbing")}
+      className={cn(
+        "absolute group/table",
+        // touch-none stops the browser claiming touch moves for scrolling, so
+        // pointer events (and the drag) keep flowing on tablets/phones. Only in
+        // edit mode — otherwise touches on tables should still pan the canvas.
+        editMode && "cursor-grab active:cursor-grabbing touch-none select-none",
+      )}
       style={{ left: pos.x, top: pos.y }}
       onPointerDown={editMode ? (e) => onDragStart(table, e) : undefined}
       onPointerMove={editMode ? onDragMove : undefined}
       onPointerUp={editMode ? onDragEnd : undefined}
+      onPointerCancel={editMode ? onDragEnd : undefined}
     >
       <div
         className={cn(
@@ -63,7 +70,10 @@ function TableMarker({
         <button
           type="button"
           disabled={isDeleting}
-          className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-error text-on-error flex items-center justify-center opacity-0 group-hover/table:opacity-100 transition-opacity shadow-sm"
+          aria-label={`Delete table ${table.label}`}
+          // 44px hit area around a small visual badge. Hover-revealed only on
+          // fine pointers; always visible on touch, where there's no hover.
+          className="absolute -top-5 -right-5 w-11 h-11 flex items-center justify-center pointer-fine:opacity-0 pointer-fine:group-hover/table:opacity-100 focus-visible:opacity-100 transition-opacity"
           // Stop the pointerdown here from bubbling to the marker div's own
           // onPointerDown (drag start) — without this, pressing the button
           // also captures the pointer for a drag, which can swallow the
@@ -76,7 +86,9 @@ function TableMarker({
             });
           }}
         >
-          <Icon name="close" className="text-sm" />
+          <span className="w-7 h-7 rounded-full bg-error text-on-error flex items-center justify-center shadow-sm">
+            <Icon name="close" className="text-sm" />
+          </span>
         </button>
       ) : null}
     </div>
@@ -119,6 +131,8 @@ export function FloorWorkspace({
   }
 
   function handleDragStart(table: FloorTable, e: React.PointerEvent<HTMLDivElement>) {
+    // Ignore secondary mouse buttons and extra fingers once a drag is live.
+    if (e.button !== 0 || draggingId) return;
     e.currentTarget.setPointerCapture(e.pointerId);
     e.currentTarget.dataset.startX = String(e.clientX);
     e.currentTarget.dataset.startY = String(e.clientY);
@@ -173,7 +187,7 @@ export function FloorWorkspace({
           <p className="font-label-caps text-label-caps text-error">{actionError}</p>
         ) : null}
         {canEdit ? (
-          <div className="w-80">
+          <div className="w-full max-w-80 px-4">
             <SectionManager
               sections={[]}
               restaurantId={restaurantId}
@@ -195,16 +209,16 @@ export function FloorWorkspace({
   );
 
   return (
-    <div className="flex-1 flex overflow-hidden">
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="h-14 border-b border-outline-variant bg-surface flex items-center justify-between px-6 shrink-0">
-          <div className="flex items-center gap-1">
+    <div className="flex-1 min-h-0 flex flex-col lg:flex-row overflow-hidden">
+      <div className="flex-1 min-h-0 min-w-0 flex flex-col overflow-hidden">
+        <div className="min-h-14 border-b border-outline-variant bg-surface flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 md:px-6 py-2 shrink-0">
+          <div className="flex items-center gap-1 overflow-x-auto max-w-full">
             {sections.map((section) => (
               <Link
                 key={section.id}
                 href={`?section=${section.id}`}
                 className={cn(
-                  "px-3 py-1.5 rounded font-label-caps text-label-caps transition-colors",
+                  "px-3 py-2.5 md:py-1.5 rounded font-label-caps text-label-caps whitespace-nowrap transition-colors",
                   section.id === activeSection.id
                     ? "bg-secondary-container text-on-secondary-container font-bold"
                     : "text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface",
@@ -215,8 +229,8 @@ export function FloorWorkspace({
             ))}
           </div>
 
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-4 font-label-caps text-label-caps text-on-surface-variant">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-label-caps text-label-caps text-on-surface-variant">
               {STATUS_ORDER.map((status) => (
                 <div key={status} className="flex items-center gap-2">
                   <div className={cn("w-4 h-4", STATUS_SWATCH[status])} />
@@ -251,12 +265,13 @@ export function FloorWorkspace({
         </div>
 
         {actionError ? (
-          <div className="px-6 py-2 border-b border-outline-variant bg-error/10 flex items-center justify-between gap-2">
+          <div className="px-4 md:px-6 py-1 border-b border-outline-variant bg-error/10 flex items-center justify-between gap-2">
             <p className="font-label-caps text-label-caps text-error">{actionError}</p>
             <button
               type="button"
               onClick={() => setActionError(null)}
-              className="text-error"
+              aria-label="Dismiss error"
+              className="text-error h-11 w-11 -mr-3 flex items-center justify-center shrink-0"
             >
               <Icon name="close" className="text-sm" />
             </button>
@@ -264,7 +279,7 @@ export function FloorWorkspace({
         ) : null}
 
         {showAddTable ? (
-          <div className="px-6 py-3 border-b border-outline-variant bg-surface-container">
+          <div className="px-4 md:px-6 py-3 border-b border-outline-variant bg-surface-container">
             <AddTableForm
               restaurantId={restaurantId}
               floorSectionId={activeSection.id}
@@ -274,7 +289,9 @@ export function FloorWorkspace({
           </div>
         ) : null}
 
-        <div className="flex-1 relative overflow-auto floorplan-bg">
+        {/* The canvas keeps its fixed min size (table positions are absolute
+            pixels) and scrolls in both directions on narrow screens. */}
+        <div className="flex-1 min-h-0 relative overflow-auto overscroll-contain floorplan-bg">
           {activeSection.tables.length === 0 ? (
             <div className="w-full h-full flex items-center justify-center text-on-surface-variant font-body-md text-body-md">
               No tables in this section yet.

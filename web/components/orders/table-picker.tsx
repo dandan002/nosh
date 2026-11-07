@@ -1,10 +1,10 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useState, useTransition } from "react";
 import Link from "next/link";
 
 import type { OrderableFloorSection } from "@/lib/data/orders";
-import { seatTable } from "@/lib/actions/orders";
+import { markTableClean, seatTable } from "@/lib/actions/orders";
 import { useRealtimeRefresh } from "@/lib/hooks/use-realtime-refresh";
 import { STATUS_LABEL, STATUS_SWATCH } from "@/lib/floor-plan-styles";
 import { Button } from "@/components/ui/button";
@@ -35,7 +35,7 @@ function SeatTableForm({
       <label className="font-label-caps text-label-caps text-on-surface-variant">
         Party size
       </label>
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <Input
           name="partySize"
           type="number"
@@ -44,12 +44,12 @@ function SeatTableForm({
           defaultValue={2}
           required
           autoFocus
-          className="h-9 text-sm w-20"
+          className="h-11 text-sm w-20"
         />
-        <Button type="submit" size="sm" disabled={pending}>
+        <Button type="submit" disabled={pending}>
           {pending ? "Seating..." : "Seat"}
         </Button>
-        <Button type="button" variant="ghost" size="sm" onClick={onCancel}>
+        <Button type="button" variant="ghost" onClick={onCancel}>
           Cancel
         </Button>
       </div>
@@ -62,6 +62,30 @@ function SeatTableForm({
         <p className="font-label-caps text-label-caps text-error">{state.error}</p>
       ) : null}
     </form>
+  );
+}
+
+function MarkCleanButton({ tableId, restaurantSlug }: { tableId: string; restaurantSlug: string }) {
+  const [pending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
+
+  return (
+    <>
+      <Button
+        variant="outline"
+        disabled={pending}
+        onClick={() => {
+          setError(null);
+          startTransition(async () => {
+            const result = await markTableClean(tableId, restaurantSlug);
+            if (result?.error) setError(result.error);
+          });
+        }}
+      >
+        <Icon name="cleaning_services" className="text-base" /> {pending ? "Saving..." : "Mark clean"}
+      </Button>
+      {error ? <p className="font-label-caps text-label-caps text-error">{error}</p> : null}
+    </>
   );
 }
 
@@ -91,7 +115,7 @@ export function TablePicker({
   }
 
   return (
-    <div className="flex-1 overflow-auto p-6 flex flex-col gap-8">
+    <div className="flex-1 min-h-0 overflow-auto p-4 md:p-6 flex flex-col gap-8">
       {sections.map((section) => (
         <div key={section.id} className="flex flex-col gap-3">
           <h2 className="font-headline-sm text-headline-sm text-on-surface">{section.name}</h2>
@@ -108,7 +132,7 @@ export function TablePicker({
                     key={table.id}
                     className="border border-outline-variant rounded p-3 bg-surface flex flex-col gap-2"
                   >
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
                       <span className="font-headline-sm text-headline-sm text-on-surface">
                         {table.label}
                       </span>
@@ -124,13 +148,17 @@ export function TablePicker({
                     </p>
 
                     {occupied ? (
-                      <Button size="sm" variant="outline" asChild>
+                      <Button variant="outline" asChild>
                         <Link href={`/${restaurantSlug}/orders/${table.activeSessionId}`}>
                           <Icon name="receipt_long" className="text-base" /> View Order
                         </Link>
                       </Button>
                     ) : canSeat ? (
-                      seatingTableId === table.id ? (
+                      <>
+                      {table.status === "dirty" && seatingTableId !== table.id ? (
+                        <MarkCleanButton tableId={table.id} restaurantSlug={restaurantSlug} />
+                      ) : null}
+                      {seatingTableId === table.id ? (
                         <SeatTableForm
                           restaurantId={restaurantId}
                           tableId={table.id}
@@ -139,10 +167,11 @@ export function TablePicker({
                           onCancel={() => setSeatingTableId(null)}
                         />
                       ) : (
-                        <Button size="sm" onClick={() => setSeatingTableId(table.id)}>
+                        <Button onClick={() => setSeatingTableId(table.id)}>
                           <Icon name="add" className="text-base" /> Seat
                         </Button>
-                      )
+                      )}
+                      </>
                     ) : null}
                   </div>
                 );

@@ -109,19 +109,54 @@ Key decisions:
 - [x] **Live-verified** against the real Supabase project (`test-kitchen`): flipped a table's status via direct SQL from a separate connection and watched the open floor-plan tab update its status counts and table label with no reload; inserted a `table_sessions` row directly and watched the open orders table-picker tab flip that table to "Occupied" with a live "View Order" link; updated an `order_items` row and watched the open order-entry ticket flip from "Preparing" to "Ready." `get_advisors` showed no new WARNs (a batch of `unused_index` INFO lints appeared because the project's stats had just reset after an unrelated pause/restore — not a regression).
 - [x] Note: the "rev" Supabase project auto-paused from inactivity mid-session (free-tier behavior) and had to be restored before any of the above could be verified — not a code issue, just something to expect if the project sits idle for a while.
 
-**Not started** (tracked as GitHub issues, milestone [Phase A — core service loop](https://github.com/dandan002/nosh/milestone/1)):
-- [ ] Delivery/completion tracking — server sees "ready" items live, marks delivered ([#4](https://github.com/dandan002/nosh/issues/4))
-- [ ] Responsive/tablet polish pass ([#5](https://github.com/dandan002/nosh/issues/5))
-- [ ] Demo-restaurant seed script ([#6](https://github.com/dandan002/nosh/issues/6))
-- [ ] Playwright E2E smoke test (seat table → order → kitchen → deliver) ([#7](https://github.com/dandan002/nosh/issues/7))
+**Done (responsive/tablet polish pass, 2026-11-07, [#5](https://github.com/dandan002/nosh/issues/5)):**
+- [x] Sidebar: below `md` the hover-expand rail becomes a top bar with a menu button that opens a drawer with full labels. The drawer closes on backdrop tap, Escape, a link tap, or a route change. At `md`+ the hover rail is unchanged. The tenant layout uses `md:ml-20`, and pages use `h-[calc(100dvh-3.5rem)] md:h-dvh` to leave room for the mobile top bar.
+- [x] Floor plan: touch drag (`touch-none` on draggable tables in edit mode only, `onPointerCancel`, primary pointer only). The delete "x" now has a 44px hit area and is always visible on touch devices. The canvas scrolls instead of clipping, and the section manager stacks below `lg`.
+- [x] Order entry: below `lg`, a Menu/Ticket toggle shows one panel at a time, and the Ticket tab shows the unsent count. The modifier picker is a bottom sheet on phones with a scrollable body. Steppers, option rows and action buttons are at least 44px.
+- [x] Kitchen board: columns snap-scroll sideways on phones and share the width at `md`+. Buttons are tap-sized.
+- [x] Menu admin: the categories panel stacks above the items below `md`. Edit and delete controls were hover-only, so they were invisible on touch; they now always show on touch devices.
+- [x] Verified with lint, typecheck, tests and build. Not yet checked visually on a real device; every page needs a Supabase login.
 
-### Phase B — billing fast-follow (not started, milestone [Phase B — billing fast-follow](https://github.com/dandan002/nosh/milestone/2))
-- [ ] `checks`, `check_items`, `payments`, `stripe_webhook_events` migrations ([#8](https://github.com/dandan002/nosh/issues/8))
-- [ ] Stripe Connect Express account onboarding per restaurant ([#9](https://github.com/dandan002/nosh/issues/9))
-- [ ] Check generation from a session's `order_items` ([#10](https://github.com/dandan002/nosh/issues/10))
-- [ ] Payment collection (destination charges, `application_fee_amount`) ([#11](https://github.com/dandan002/nosh/issues/11))
-- [ ] Split billing (even / by-seat / by-item) ([#12](https://github.com/dandan002/nosh/issues/12))
-- [ ] Tips, receipts, transaction history/reporting ([#13](https://github.com/dandan002/nosh/issues/13))
+**Closed without implementation:** [#4](https://github.com/dandan002/nosh/issues/4) delivery tracking, [#6](https://github.com/dandan002/nosh/issues/6) seed script, [#7](https://github.com/dandan002/nosh/issues/7) Playwright smoke test. These issues were closed on GitHub on 2026-07-27. `ready → delivered` is still not driven from the UI. Check generation bills every item that was fired and not cancelled, whether or not it was delivered.
+
+### Phase B — billing fast-follow (milestone [Phase B — billing fast-follow](https://github.com/dandan002/nosh/milestone/2))
+
+**Done (2026-11-07). Lint, typecheck, unit tests and build pass. Not yet run against the live Supabase project or Stripe test mode. `0005_billing.sql` has not been applied to the live project.**
+- [x] **Schema** ([#8](https://github.com/dandan002/nosh/issues/8)): `supabase/migrations/0005_billing.sql`.
+  - New tables: `checks`, `check_items`, `payments`, `stripe_webhook_events`, `restaurant_stripe_accounts`, plus `restaurants.tax_rate_bps`.
+  - Partial unique indexes allow one open check per session and one succeeded payment per portion.
+  - Money-moving state is not writable by the `authenticated` role. That covers `payments` (no write policies), `checks.status = 'paid'` (the update policy's `with check` only allows `open`/`void`), `restaurant_stripe_accounts` and `stripe_webhook_events`. Only the service role writes these (`lib/supabase/admin.ts`), and only after Stripe confirms. Otherwise any server could "mark as paid" through PostgREST.
+  - `checks`, `check_items` and `payments` are added to the realtime publication.
+  - `set_table_service_status()` is a SECURITY DEFINER function that lets server-tier staff change only a table's status. It fixes an existing bug: `seatTable`'s direct `tables` UPDATE silently matched zero rows for `server`-role staff, because that policy is manager-only. It also powers the new "Mark clean" button.
+- [x] **Stripe Connect Express onboarding** ([#9](https://github.com/dandan002/nosh/issues/9)): Settings → Payments, owner/admin only.
+  - Creates the Express account with an idempotency key per restaurant and redirects to Stripe's hosted onboarding.
+  - On return, it re-reads the account from Stripe. The `account.updated` webhook keeps the state in sync as well.
+  - Once onboarded, the button becomes a Stripe Express dashboard login link.
+  - Card payments are blocked until `charges_enabled` is true.
+- [x] **Check generation** ([#10](https://github.com/dandan002/nosh/issues/10)): `openCheckForSession` and `regenerateCheck` in `lib/actions/billing.ts`.
+  - The check covers every fired, preparing, ready or delivered `order_item` across the session's orders.
+  - Each unit becomes its own `check_items` row, so units can be split separately.
+  - The restaurant's real tax rate (Settings → Tax) is snapshotted onto the check. The order-entry ticket's hardcoded 8% placeholder now uses the same rate and the same rounding.
+  - "Rebuild from order" voids the check and regenerates it, as long as no payment has succeeded.
+- [x] **Payment collection** ([#11](https://github.com/dandan002/nosh/issues/11)):
+  - `createPayment` recomputes the portion amount on the server and creates a destination-charge PaymentIntent (`transfer_data.destination`, `application_fee_amount` = `PLATFORM_FEE_BPS` of the pre-tip amount, card-style methods only, no redirects).
+  - Payment is collected in-app with Stripe's Payment Element (`components/billing/payment-sheet.tsx`).
+  - Settlement in `lib/billing/finalize.ts` always re-reads the PaymentIntent from Stripe and is idempotent. Two paths run it: the signature-verified webhook (`app/api/stripe/webhook`, which records the event id first and sets `processed_at` after, so a delivery that failed mid-way is retried) and a client `syncPayment` call right after confirmation.
+  - When every portion that owes money is paid, the check is marked paid, the session closes, and the table becomes `dirty`.
+  - A $0 check can be closed directly.
+- [x] **Split billing** ([#12](https://github.com/dandan002/nosh/issues/12)): one check, split evenly N ways, by seat, or by item (guests), with tap-to-assign chips per unit.
+  - Splitting uses a largest-remainder allocation (`lib/billing/split.ts`, unit-tested), so the portions always add up exactly to the check total.
+  - Changing the split cancels pending PaymentIntents.
+  - The split locks after the first successful payment.
+  - Each portion is paid as its own PaymentIntent.
+- [x] **Tips, receipts, history** ([#13](https://github.com/dandan002/nosh/issues/13)):
+  - Tips: 15/18/20/25% of the pre-tax subtotal, a custom amount, or none, stored in `payments.tip_cents`.
+  - Receipts: printable from `/billing/[checkId]/receipt`, either for the whole check (a pre-bill with suggested tips while the check is open) or per payment. Stripe emails a receipt when a receipt email is entered.
+  - Analytics (managers and above): date-range transaction history with collected, tips, tax, platform fees, net and refunded totals, plus CSV export. Days are UTC because restaurants don't store a timezone yet.
+- Known limitations:
+  - A PaymentIntent could succeed after its split was changed. Its portion number would then refer to the new split; this would show up in reconciliation.
+  - Partial refunds aren't reflected; only full refunds mark a payment `refunded`.
+  - There are no cash payments, matching the decision to process real payments through Stripe rather than "mark as paid".
 
 ## Repo Structure (as built)
 
@@ -134,20 +169,23 @@ nosh/                          (repo root; product name is "rev", folder name un
     app/
       (auth pages: login/, signup/, auth/confirm, auth/auth-code-error)
       onboarding/restaurant/
-      [restaurantSlug]/         (layout.tsx = tenant shell; floor/ = visualization + admin editor; admin/menu/ = menu management; orders/ = table picker + order entry; kitchen/ = kanban ticket board)
+      [restaurantSlug]/         (layout.tsx = tenant shell; floor/ = visualization + admin editor; admin/menu/ = menu management; orders/ = table picker + order entry; kitchen/ = kanban ticket board; billing/ = checks, split, payment, receipts; admin/settings/ = tax + Stripe Connect; admin/analytics/ = transaction history + CSV)
+      api/stripe/webhook/       (Stripe webhook, signature-verified + idempotent)
       page.tsx                  (redirects to last restaurant or onboarding)
-    components/{ui,auth,nav,floor,menu,orders,kitchen}/
+    components/{ui,auth,nav,floor,menu,orders,kitchen,billing}/
     lib/
-      supabase/{client,server}.ts
+      supabase/{client,server,admin}.ts
+      stripe/server.ts
+      billing/{split,date-range}.ts (+ tests), billing/finalize.ts
       hooks/use-realtime-refresh.ts
-      actions/{auth,onboarding,floor,menu,orders,kitchen}.ts
-      validations/{auth,onboarding,floor,menu,orders,kitchen}.ts
-      data/{restaurant,floor,menu,orders,kitchen}.ts
+      actions/{auth,onboarding,floor,menu,orders,kitchen,billing}.ts
+      validations/{auth,onboarding,floor,menu,orders,kitchen,billing}.ts
+      data/{restaurant,floor,menu,orders,kitchen,billing}.ts
       floor-plan-styles.ts
       slug.ts (+ slug.test.ts)
     proxy.ts
     supabase/
-      migrations/{0001_init,0002_floor_menu_orders,0003_kitchen_realtime,0004_floor_orders_realtime}.sql
+      migrations/{0001_init,0002_floor_menu_orders,0003_kitchen_realtime,0004_floor_orders_realtime,0005_billing}.sql
       README.md
     stitch-export/                (Stitch mockups — design reference, already landed)
     vitest.config.ts
@@ -161,8 +199,9 @@ nosh/                          (repo root; product name is "rev", folder name un
 4. ~~Menu management CRUD~~ — done, `app/[restaurantSlug]/admin/menu`, `components/menu/`.
 5. ~~Order entry screen~~ — done, `app/[restaurantSlug]/orders`, `components/orders/`.
 6. ~~Kitchen display~~ — done, `app/[restaurantSlug]/kitchen`, `components/kitchen/`, realtime on `order_items` ([#2](https://github.com/dandan002/nosh/issues/2)). ~~Realtime on `tables`/`table_sessions`~~ — done, `lib/hooks/use-realtime-refresh.ts` ([#3](https://github.com/dandan002/nosh/issues/3)).
-7. Delivery/completion tracking to close the Phase A loop ([#4](https://github.com/dandan002/nosh/issues/4)).
-8. Seed script + Playwright smoke test once the loop is end-to-end ([#6](https://github.com/dandan002/nosh/issues/6), [#7](https://github.com/dandan002/nosh/issues/7)).
+7. ~~Responsive pass ([#5](https://github.com/dandan002/nosh/issues/5)) and Phase B billing ([#8](https://github.com/dandan002/nosh/issues/8)–[#13](https://github.com/dandan002/nosh/issues/13))~~: code complete.
+8. Apply `0005_billing.sql` to the live project, check `get_advisors`, and do a live end-to-end run in Stripe test mode: onboard, generate a check, split it, pay, confirm the webhook, check the receipt and the report.
+9. Revisit the closed Phase A issues if wanted: delivery tracking ([#4](https://github.com/dandan002/nosh/issues/4)), seed script ([#6](https://github.com/dandan002/nosh/issues/6)), E2E smoke test ([#7](https://github.com/dandan002/nosh/issues/7)).
 
 ## Verification
 

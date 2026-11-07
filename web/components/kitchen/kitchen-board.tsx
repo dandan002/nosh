@@ -91,8 +91,8 @@ function TicketItemRow({
   }
 
   return (
-    <div className="flex items-start justify-between gap-2 py-2 border-b border-outline-variant last:border-b-0">
-      <div className="min-w-0">
+    <div className="flex flex-wrap items-start justify-between gap-2 py-2 border-b border-outline-variant last:border-b-0">
+      <div className="min-w-0 flex-1 basis-40">
         <p className="font-body-md text-body-md text-on-surface">
           {item.quantity}&times; {item.menuItemName}
         </p>
@@ -110,11 +110,12 @@ function TicketItemRow({
       </div>
 
       {canAdvance ? (
-        <div className="flex items-center gap-1 shrink-0">
+        <div className="flex items-center gap-1 shrink-0 ml-auto">
           {column.backward ? (
             <Button
               variant="ghost"
               size="icon"
+              className="h-11 w-11"
               disabled={pending}
               title={column.backward.label}
               onClick={() => move(column.backward!)}
@@ -126,6 +127,7 @@ function TicketItemRow({
             <Button
               variant="ghost"
               size="icon"
+              className="h-11 w-11"
               disabled={pending}
               title={column.cancel.label}
               onClick={() => {
@@ -137,7 +139,7 @@ function TicketItemRow({
             </Button>
           ) : null}
           {column.forward ? (
-            <Button size="sm" disabled={pending} onClick={() => move(column.forward!)}>
+            <Button disabled={pending} onClick={() => move(column.forward!)}>
               {pending ? "..." : column.forward.label}
             </Button>
           ) : null}
@@ -161,7 +163,9 @@ export function KitchenBoard({
   useRealtimeRefresh(`kitchen-${restaurantId}`, restaurantId, ["order_items"]);
 
   return (
-    <div className="flex-1 overflow-auto p-6 flex gap-4">
+    // Phones: columns scroll horizontally, snapping one at a time. md+: the
+    // three columns share the width (scrolling only if it gets too narrow).
+    <div className="flex-1 min-h-0 overflow-auto p-4 md:p-6 flex gap-3 md:gap-4 snap-x snap-mandatory md:snap-none scroll-px-4">
       {COLUMNS.map((column) => {
         const columnItems = items.filter((item) => item.status === column.status);
         const tickets = groupByOrder(columnItems);
@@ -169,7 +173,7 @@ export function KitchenBoard({
         return (
           <div
             key={column.status}
-            className="w-80 shrink-0 flex flex-col gap-3 bg-surface-container-low rounded p-3"
+            className="w-[85vw] max-w-80 shrink-0 md:w-auto md:max-w-none md:flex-1 md:min-w-56 snap-start min-h-0 flex flex-col gap-3 bg-surface-container-low rounded p-3"
           >
             <div className="flex items-center justify-between px-1">
               <h2 className="font-headline-sm text-headline-sm text-on-surface">
@@ -180,7 +184,7 @@ export function KitchenBoard({
               </span>
             </div>
 
-            <div className="flex flex-col gap-3 overflow-y-auto">
+            <div className="flex-1 min-h-0 flex flex-col gap-3 overflow-y-auto">
               {tickets.length === 0 ? (
                 <p className="font-body-sm text-body-sm text-on-surface-variant px-1">
                   Nothing here.
