@@ -117,7 +117,7 @@ export function SectionManager({
   );
 
   return (
-    <div className="w-80 bg-surface border-l border-outline-variant flex flex-col shrink-0 p-4 gap-4">
+    <div className="w-full lg:w-80 max-h-[45%] lg:max-h-none overflow-y-auto bg-surface border-t lg:border-t-0 lg:border-l border-outline-variant flex flex-col shrink-0 p-4 gap-4">
       <h2 className="font-headline-sm text-headline-sm text-on-surface">Sections</h2>
       <div className="flex flex-col gap-1 divide-y divide-outline-variant">
         {sections.map((section) => (

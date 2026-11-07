@@ -12,9 +12,9 @@ export default async function KitchenPage({
   const items = await getKitchenTickets(restaurant.id);
 
   return (
-    <div className="flex flex-col h-screen">
-      <header className="h-16 border-b border-outline-variant flex items-center px-6 shrink-0">
-        <h1 className="font-headline-sm text-headline-sm text-on-surface">
+    <div className="flex flex-col h-[calc(100dvh-3.5rem)] md:h-dvh">
+      <header className="h-16 border-b border-outline-variant flex items-center px-4 md:px-6 shrink-0">
+        <h1 className="font-headline-sm text-headline-sm text-on-surface truncate">
           {restaurant.name} &middot; Kitchen
         </h1>
       </header>

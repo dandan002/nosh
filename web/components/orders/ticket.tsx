@@ -5,8 +5,10 @@ import { useState, useTransition } from "react";
 import type { FiredOrder } from "@/lib/data/orders";
 import type { ModifierSelection } from "@/components/orders/modifier-picker";
 import { moveOrderItemStatus } from "@/lib/actions/kitchen";
+import { taxForSubtotal } from "@/lib/billing/split";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/icon";
+import { cn } from "@/lib/utils";
 
 export type DraftLine = {
   key: string;
@@ -27,10 +29,6 @@ function lineTotalCents(line: DraftLine): number {
   return (line.unitPriceCents + modifiersTotal) * line.quantity;
 }
 
-// Placeholder rate for the running total shown while building a ticket —
-// not the authoritative tax calculation, which belongs to Phase B billing
-// (checks/payments) once that's built.
-const DISPLAY_TAX_RATE = 0.08;
 
 const ITEM_STATUS_LABEL: Record<string, string> = {
   pending: "Pending",
@@ -60,8 +58,10 @@ function UnsendButton({
       <Button
         variant="ghost"
         size="icon"
+        className="h-11 w-11"
         disabled={pending}
         title="Unsend"
+        aria-label={`Unsend ${itemLabel}`}
         onClick={() => {
           if (!window.confirm(`Unsend ${itemLabel}? The kitchen hasn't started it yet.`)) return;
           setError(null);
@@ -85,10 +85,12 @@ function UnsendButton({
 }
 
 export function Ticket({
+  className,
   draftLines,
   firedOrders,
   restaurantSlug,
   sessionPath,
+  taxRateBps,
   onIncrement,
   onDecrement,
   onRemove,
@@ -96,6 +98,12 @@ export function Ticket({
   firing,
   error,
 }: {
+  className?: string;
+  // The restaurant's configured rate (Settings → Tax). This running total
+  // is an estimate for the server; the authoritative tax is computed when
+  // the check is generated (lib/actions/billing.ts), with the same
+  // taxForSubtotal() rounding.
+  taxRateBps: number;
   draftLines: DraftLine[];
   firedOrders: FiredOrder[];
   restaurantSlug: string;
@@ -108,7 +116,6 @@ export function Ticket({
   error: string | null;
 }) {
   const draftSubtotal = draftLines.reduce((sum, line) => sum + lineTotalCents(line), 0);
-  const draftTax = Math.round(draftSubtotal * DISPLAY_TAX_RATE);
 
   // Cancelled (unsent) items don't count toward the bill.
   const firedSubtotal = firedOrders.reduce(
@@ -126,8 +133,17 @@ export function Ticket({
     0,
   );
 
+
+  const tax = taxForSubtotal(firedSubtotal + draftSubtotal, taxRateBps);
+
   return (
-    <div className="w-96 bg-surface border-l border-outline-variant flex flex-col shrink-0">
+    // Full-width (and toggled by the workspace) below lg; fixed side panel at lg+.
+    <div
+      className={cn(
+        "flex-1 min-h-0 w-full lg:flex-none lg:w-96 bg-surface lg:border-l border-outline-variant flex flex-col lg:shrink-0",
+        className,
+      )}
+    >
       <div className="h-14 border-b border-outline-variant flex items-center px-4 shrink-0">
         <h2 className="font-headline-sm text-headline-sm text-on-surface">Current Order</h2>
       </div>
@@ -217,16 +233,34 @@ export function Ticket({
                     </p>
                   ) : null}
                   <div className="flex items-center gap-2 mt-2">
-                    <Button variant="outline" size="icon" onClick={() => onDecrement(line.key)}>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-11 w-11"
+                      aria-label={`Decrease ${line.name}`}
+                      onClick={() => onDecrement(line.key)}
+                    >
                       <Icon name="remove" className="text-sm" />
                     </Button>
-                    <span className="font-label-lg text-label-lg w-4 text-center">
+                    <span className="font-label-lg text-label-lg w-6 text-center">
                       {line.quantity}
                     </span>
-                    <Button variant="outline" size="icon" onClick={() => onIncrement(line.key)}>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-11 w-11"
+                      aria-label={`Increase ${line.name}`}
+                      onClick={() => onIncrement(line.key)}
+                    >
                       <Icon name="add" className="text-sm" />
                     </Button>
-                    <Button variant="ghost" size="icon" onClick={() => onRemove(line.key)}>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-11 w-11"
+                      aria-label={`Remove ${line.name}`}
+                      onClick={() => onRemove(line.key)}
+                    >
                       <Icon name="delete" className="text-sm text-error" />
                     </Button>
                   </div>
@@ -240,23 +274,24 @@ export function Ticket({
         ) : null}
       </div>
 
-      <div className="p-4 border-t border-outline-variant shrink-0 flex flex-col gap-1">
+      <div className="p-4 pb-[max(1rem,env(safe-area-inset-bottom))] border-t border-outline-variant shrink-0 flex flex-col gap-1">
         <div className="flex items-center justify-between font-body-sm text-body-sm text-on-surface-variant">
           <span>Subtotal</span>
           <span>{money(firedSubtotal + draftSubtotal)}</span>
         </div>
         <div className="flex items-center justify-between font-body-sm text-body-sm text-on-surface-variant">
-          <span>Tax (8%, est.)</span>
-          <span>{money(draftTax)}</span>
+          <span>Tax ({(taxRateBps / 100).toFixed(2).replace(/\.?0+$/, "")}%, est.)</span>
+          <span>{money(tax)}</span>
         </div>
         <div className="flex items-center justify-between font-headline-sm text-headline-sm text-on-surface mb-2">
           <span>Total</span>
-          <span>{money(firedSubtotal + draftSubtotal + draftTax)}</span>
+          <span>{money(firedSubtotal + draftSubtotal + tax)}</span>
         </div>
         {error ? (
           <p className="font-label-caps text-label-caps text-error mb-1">{error}</p>
         ) : null}
         <Button
+          size="lg"
           className="w-full"
           disabled={draftLines.length === 0 || firing}
           onClick={onFire}

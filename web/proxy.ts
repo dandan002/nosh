@@ -1,7 +1,9 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const PUBLIC_PATHS = ["/login", "/signup", "/auth"];
+// /api/stripe/webhook is called by Stripe (no user session); it
+// authenticates requests by verifying the Stripe signature instead.
+const PUBLIC_PATHS = ["/login", "/signup", "/auth", "/api/stripe/webhook"];
 
 function isPublicPath(pathname: string) {
   if (pathname === "/") return true;

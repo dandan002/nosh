@@ -50,7 +50,13 @@ export async function seatTable(
     return { error: "This table already has an active session — refresh and try again." };
   }
 
-  await supabase.from("tables").update({ status: "occupied" }).eq("id", tableId);
+  // Via set_table_service_status (0005_billing.sql) rather than a direct
+  // UPDATE: tables' UPDATE policy is manager-only, so a direct update
+  // silently matched zero rows for server-role staff.
+  await supabase.rpc("set_table_service_status", {
+    target_table_id: tableId,
+    new_status: "occupied",
+  });
 
   revalidatePath(`/${restaurantSlug}/orders`);
   revalidatePath(`/${restaurantSlug}/floor`);
@@ -161,4 +167,27 @@ export async function fireOrder(
   }
 
   revalidatePath(`/${restaurantSlug}/orders/${sessionId}`);
+}
+
+// Bussed: a "dirty" table (set when its check closes) is ready for the next
+// party. Server-or-above, enforced inside set_table_service_status.
+export async function markTableClean(
+  tableId: string,
+  restaurantSlug: string,
+): Promise<OrdersActionState> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("set_table_service_status", {
+    target_table_id: tableId,
+    new_status: "available",
+  });
+
+  if (error) {
+    return { error: error.message };
+  }
+  if (!data) {
+    return { error: "Table not found or not permitted." };
+  }
+
+  revalidatePath(`/${restaurantSlug}/orders`);
+  revalidatePath(`/${restaurantSlug}/floor`);
 }
